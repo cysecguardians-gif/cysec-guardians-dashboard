@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Manage Users</title>
+
+  <!-- CoreUI CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/css/coreui.min.css" rel="stylesheet">
+  <link href="/assets/css/custom.css" rel="stylesheet">
+</head>
+
+<body class="body">
+  <div class="d-flex">
+
+    <!-- Sidebar -->
+    <div class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
+      <div class="sidebar-brand d-none d-md-flex">
+        <h4 class="text-white">CySec Guardians</h4>
+      </div>
+
+      <ul class="sidebar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="/org-admin/index.html">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="/org-admin/users.html">Users</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/org-admin/trainings.html">Trainings</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/org-admin/phishing.html">Phishing Simulation</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/org-admin/reports.html">Reports</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/org-admin/settings.html">Settings</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container-fluid p-4">
+
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Organization Users</h2>
+        <button class="btn btn-primary">Add User</button>
+      </div>
+
+      <div class="card">
+        <div class="card-body table-responsive">
+          <table class="table table-bordered table-hover">
+            <thead class="table-light">
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Department</th>
+                <th>Awareness Score</th>
+                <th>Trainings Completed</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Amit Sharma</td>
+                <td>amit@company.com</td>
+                <td>Finance</td>
+                <td>88%</td>
+                <td>10</td>
+                <td><span class="badge bg-success">Compliant</span></td>
+              </tr>
+              <tr>
+                <td>Neha Gupta</td>
+                <td>neha@company.com</td>
+                <td>HR</td>
+                <td>72%</td>
+                <td>6</td>
+                <td><span class="badge bg-warning">Pending</span></td>
+              </tr>
+              <tr>
+                <td>Ravi Patel</td>
+                <td>ravi@company.com</td>
+                <td>IT</td>
+                <td>55%</td>
+                <td>4</td>
+                <td><span class="badge bg-danger">At Risk</span></td>
+              </tr>
+              <tr>
+                <td>Priya Singh</td>
+                <td>priya@company.com</td>
+                <td>Operations</td>
+                <td>91%</td>
+                <td>12</td>
+                <td><span class="badge bg-success">Compliant</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CoreUI JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/js/coreui.bundle.min.js"></script>
+</body>
+</html>
