@@ -1,12 +1,23 @@
-/* --- CoreUI fixed sidebar fix --- */
-.body {
-  margin-left: 260px;
+html, body {
+  width: 100%;
+  overflow-x: hidden;
 }
 
-/* Mobile: sidebar collapses, so remove margin */
+.wrapper {
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 260px;
+}
+
+.body {
+  margin-left: 260px;
+  overflow-x: hidden;
+}
+
 @media (max-width: 991.98px) {
   .body {
     margin-left: 0;
   }
 }
-
