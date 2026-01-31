@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Org User Trainings</title>
+
+  <!-- CoreUI CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/css/coreui.min.css" rel="stylesheet">
+  <link href="/assets/css/custom.css" rel="stylesheet">
+</head>
+
+<body class="body">
+  <div class="d-flex">
+
+    <!-- Sidebar -->
+    <div class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
+      <div class="sidebar-brand d-none d-md-flex">
+        <h4 class="text-white">CySec Guardians</h4>
+      </div>
+
+      <ul class="sidebar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="/org-user/index.html">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="/org-user/training.html">Trainings</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/org-user/cyber-tips.html">Cyber Tips</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/org-user/settings.html">Settings</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container-fluid p-4">
+
+      <h2 class="mb-4">Trainings</h2>
+
+      <!-- Tabs -->
+      <ul class="nav nav-tabs" id="trainingTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" data-coreui-toggle="tab" data-coreui-target="#assigned" type="button">
+            Assigned Trainings
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" data-coreui-toggle="tab" data-coreui-target="#all" type="button">
+            All Trainings
+          </button>
+        </li>
+      </ul>
+
+      <div class="tab-content mt-4">
+
+        <!-- Assigned Trainings Tab -->
+        <div class="tab-pane fade show active" id="assigned">
+
+          <div class="card mb-3">
+            <div class="card-body d-flex justify-content-between align-items-center">
+              <div>
+                <h5>Phishing Awareness Program</h5>
+                <small>Mandatory by Organization</small>
+              </div>
+              <span class="badge bg-primary">Assigned</span>
+            </div>
+          </div>
+
+          <div class="card mb-3">
+            <div class="card-body d-flex justify-content-between align-items-center">
+              <div>
+                <h5>Data Protection & Compliance</h5>
+                <small>Mandatory by Organization</small>
+              </div>
+              <span class="badge bg-primary">Assigned</span>
+            </div>
+          </div>
+
+          <div class="card mb-3 border-success">
+            <div class="card-body d-flex justify-content-between align-items-center">
+              <div>
+                <h5>Secure Remote Working</h5>
+                <small>Self Enrolled</small>
+              </div>
+              <span class="badge bg-success">Self Enrolled</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- All Trainings Tab -->
+        <div class="tab-pane fade" id="all">
+
+          <div class="card mb-3">
+            <div class="card-body d-flex justify-content-between align-items-center">
+              <div>
+                <h5>Email Security Essentials</h5>
+                <small>Security Awareness</small>
+              </div>
+              <button class="btn btn-sm btn-primary">Enroll</button>
+            </div>
+          </div>
+
+          <div class="card mb-3">
+            <div class="card-body d-flex justify-content-between align-items-center">
+              <div>
+                <h5>Password Hygiene Masterclass</h5>
+                <small>Compliance Training</small>
+              </div>
+              <button class="btn btn-sm btn-primary">Enroll</button>
+            </div>
+          </div>
+
+          <div class="card mb-3">
+            <div class="card-body d-flex justify-content-between align-items-center">
+              <div>
+                <h5>Social Engineering Defense</h5>
+                <small>Security Awareness</small>
+              </div>
+              <button class="btn btn-sm btn-primary">Enroll</button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CoreUI JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/js/coreui.bundle.min.js"></script>
+</body>
+</html>
