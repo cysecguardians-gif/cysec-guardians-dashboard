@@ -1,17 +1,86 @@
-<h3>Settings</h3>
-<a class="nav-link active" href="/individual/settings.html">
-  Cyber Tips
-</a>
-<div class="card">
-  <div class="card-body">
-    <div class="mb-3">
-      <label class="form-label">Email Notifications</label>
-      <select class="form-select">
-        <option>Enabled</option>
-        <option>Disabled</option>
-      </select>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Settings | CySec Guardians</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- CoreUI CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/css/coreui.min.css" rel="stylesheet">
+
+  <!-- Custom CSS -->
+  <link href="/assets/css/custom.css" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="wrapper d-flex">
+
+  <!-- Sidebar -->
+  <aside class="sidebar sidebar-dark sidebar-fixed">
+    <div class="sidebar-brand d-none d-md-flex px-3 py-2">
+      <strong>CySec</strong>&nbsp;Guardians
     </div>
 
-    <button class="btn btn-primary">Save Changes</button>
+    <ul class="sidebar-nav">
+      <li class="nav-item">
+        <a class="nav-link" href="/individual/">Dashboard</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/individual/training.html">Training & Awareness</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/individual/exposure.html">Threat Exposure</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/individual/cyber-tips.html">Cyber Tips</a>
+      </li>
+      <li class="nav-item mt-auto">
+        <a class="nav-link active" href="/individual/settings.html">Settings</a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Main content -->
+  <div class="body flex-grow-1">
+    <main class="container-fluid p-4">
+
+      <h3>Settings</h3>
+
+      <div class="card mt-3">
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label">Email Notifications</label>
+            <select class="form-select">
+              <option>Enabled</option>
+              <option>Disabled</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Profile Visibility</label>
+            <select class="form-select">
+              <option>Public</option>
+              <option>Private</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Password / Security</label>
+            <input type="password" class="form-control" placeholder="Change your password">
+          </div>
+
+          <button class="btn btn-primary">Save Changes</button>
+        </div>
+      </div>
+
+    </main>
   </div>
+
 </div>
+
+<!-- CoreUI JS -->
+<script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/js/coreui.bundle.min.js"></script>
+
+</body>
+</html>
