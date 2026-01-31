@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Threat Exposure | CySec Guardians</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/css/coreui.min.css" rel="stylesheet">
+  <link href="/assets/css/custom.css" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="wrapper d-flex">
+
+  <!-- Sidebar -->
+  <aside class="sidebar sidebar-dark sidebar-fixed">
+    <div class="sidebar-brand d-none d-md-flex px-3 py-2">
+      <strong>CySec</strong>&nbsp;Guardians
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="nav-item">
+        <a class="nav-link" href="/individual/">Dashboard</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/individual/training.html">Training & Awareness</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link active" href="/individual/exposure.html">Threat Exposure</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Cyber Tips</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Settings</a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Main -->
+  <div class="body flex-grow-1">
+    <main class="container-fluid p-4">
+
+      <h3 class="mb-4">Threat Exposure</h3>
+
+      <!-- Exposure Status -->
+      <div class="row g-4 mb-4">
+        <div class="col-12 col-md-6">
+          <div class="card border-start border-4 border-warning">
+            <div class="card-body">
+              <div class="text-medium-emphasis">Current Exposure Status</div>
+              <h3 class="fw-bold text-warning">⚠ At Risk</h3>
+              <p class="mb-0">Suspicious activity detected in last 30 days.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-6">
+          <div class="card">
+            <div class="card-body">
+              <div class="text-medium-emphasis">Total Alerts</div>
+              <h3 class="fw-bold">1</h3>
+              <p class="mb-0">No critical threats detected.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Alerts -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title mb-3">Recent Alerts</h5>
+
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <strong>Phishing Email Attempt</strong><br>
+              <span class="text-medium-emphasis">
+                Detected on 28 Jan 2026 – No action required
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Recommendations -->
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title mb-3">Recommended Actions</h5>
+          <ul>
+            <li>Review recent phishing awareness training</li>
+            <li>Be cautious with unknown links</li>
+            <li>Report suspicious emails immediately</li>
+          </ul>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/js/coreui.bundle.min.js"></script>
+</body>
+</html>
