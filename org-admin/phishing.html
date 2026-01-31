@@ -19,64 +19,102 @@
       </div>
 
       <ul class="sidebar-nav">
-        <li class="nav-item">
-          <a class="nav-link" href="/org-admin/index.html">Dashboard</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/org-admin/users.html">Users</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/org-admin/trainings.html">Trainings</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active" href="/org-admin/phishing.html">Phishing Simulation</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/org-admin/reports.html">Reports</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/org-admin/settings.html">Settings</a>
-        </li>
+        <li class="nav-item"><a class="nav-link" href="/org-admin/index.html">Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link" href="/org-admin/users.html">Users</a></li>
+        <li class="nav-item"><a class="nav-link" href="/org-admin/trainings.html">Trainings</a></li>
+        <li class="nav-item"><a class="nav-link active" href="/org-admin/phishing.html">Phishing Simulation</a></li>
+        <li class="nav-item"><a class="nav-link" href="/org-admin/reports.html">Reports</a></li>
+        <li class="nav-item"><a class="nav-link" href="/org-admin/settings.html">Settings</a></li>
       </ul>
     </div>
 
     <!-- Main Content -->
     <div class="container-fluid p-4">
 
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Phishing Simulation Campaigns</h2>
-        <button class="btn btn-danger">Launch New Campaign</button>
-      </div>
+      <h2 class="mb-4">Phishing Simulation Control Center</h2>
 
-      <!-- Campaign Summary -->
+      <!-- Create Campaign -->
       <div class="card mb-4">
         <div class="card-header">
-          Campaign Summary
+          Create Phishing Campaign
         </div>
+        <div class="card-body">
+
+          <div class="mb-3">
+            <label class="form-label">Campaign Name</label>
+            <input type="text" class="form-control" placeholder="e.g. Payroll Update Scam - March">
+          </div>
+
+          <label class="form-label">Template Option</label>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="templateOption" checked>
+            <label class="form-check-label">Use Predefined Template</label>
+          </div>
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="radio" name="templateOption">
+            <label class="form-check-label">Create New Template</label>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Select Template</label>
+            <select class="form-select">
+              <option>Invoice Scam</option>
+              <option>Password Reset Alert</option>
+              <option>HR Policy Update</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Or Write Custom Email</label>
+            <textarea class="form-control" rows="4" placeholder="Write phishing email content here..."></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Select Target Users</label>
+            <input type="file" class="form-control">
+            <small class="text-muted">Upload CSV or select users (future integration)</small>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Schedule Date</label>
+            <input type="datetime-local" class="form-control">
+          </div>
+
+          <button class="btn btn-danger">Launch Campaign</button>
+
+        </div>
+      </div>
+
+      <!-- Campaign History -->
+      <div class="card mb-4">
+        <div class="card-header">Campaign History</div>
         <div class="card-body table-responsive">
           <table class="table table-bordered">
             <thead class="table-light">
               <tr>
                 <th>Campaign</th>
-                <th>Users Targeted</th>
-                <th>Click Rate</th>
-                <th>Report Rate</th>
+                <th>Sent</th>
+                <th>Clicked</th>
+                <th>Submitted</th>
+                <th>Reported</th>
                 <th>Status</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>Invoice Scam Simulation - Jan</td>
+                <td>Invoice Scam - Jan</td>
                 <td>120</td>
-                <td>32%</td>
-                <td>41%</td>
+                <td>38</td>
+                <td>12</td>
+                <td>50</td>
                 <td><span class="badge bg-success">Completed</span></td>
               </tr>
               <tr>
-                <td>Password Reset Phish - Feb</td>
+                <td>Password Reset - Feb</td>
                 <td>120</td>
-                <td>28%</td>
-                <td>47%</td>
+                <td>30</td>
+                <td>9</td>
+                <td>62</td>
                 <td><span class="badge bg-warning">Ongoing</span></td>
               </tr>
             </tbody>
@@ -84,20 +122,18 @@
         </div>
       </div>
 
-      <!-- Risky Users -->
+      <!-- User Risk Analysis -->
       <div class="card">
-        <div class="card-header">
-          Users Risk Analysis
-        </div>
+        <div class="card-header">User Risk Analysis</div>
         <div class="card-body table-responsive">
           <table class="table table-bordered">
             <thead class="table-light">
               <tr>
                 <th>User</th>
                 <th>Email</th>
-                <th>Clicked Link</th>
-                <th>Submitted Credentials</th>
-                <th>Reported Email</th>
+                <th>Clicked</th>
+                <th>Submitted</th>
+                <th>Reported</th>
                 <th>Risk Level</th>
               </tr>
             </thead>
