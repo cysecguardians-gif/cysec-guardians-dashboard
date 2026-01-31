@@ -1,1 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Org Admin Dashboard</title>
+
+  <!-- CoreUI CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/css/coreui.min.css" rel="stylesheet">
+  <link href="/assets/css/custom.css" rel="stylesheet">
+</head>
+
+<body class="body">
+  <div class="d-flex">
+
+    <!-- Sidebar -->
+    <div class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
+      <div class="sidebar-brand d-none d-md-flex">
+        <h4 class="text-white">CySec Guardians</h4>
+      </div>
+
+      <ul class="sidebar-nav">
+        <li class="nav-item">
+          <a class="nav-link active" href="/org-admin/index.html">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/org-admin/users.html">Users</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/org-admin/trainings.html">Trainings</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/org-admin/phishing.html">Phishing Simulation</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/org-admin/reports.html">Reports</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/org-admin/settings.html">Settings</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container-fluid p-4">
+
+      <h2 class="mb-4">Organization Security Overview</h2>
+
+      <!-- KPI Row -->
+      <div class="row g-4 mb-4">
+        <div class="col-md-2">
+          <div class="card text-center">
+            <div class="card-body">
+              <h6>Total Users</h6>
+              <h3>120</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-2">
+          <div class="card text-center">
+            <div class="card-body">
+              <h6>Compliant Users</h6>
+              <h3 class="text-success">86</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-2">
+          <div class="card text-center">
+            <div class="card-body">
+              <h6>Pending Training</h6>
+              <h3 class="text-warning">34</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card text-center">
+            <div class="card-body">
+              <h6>Failed Last Phishing Simulation</h6>
+              <h3 class="text-danger">18 Users</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card text-center">
+            <div class="card-body">
+              <h6>Org Awareness Score</h6>
+              <h3 class="text-primary">74%</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent User Activity -->
+      <div class="card mb-4">
+        <div class="card-header">
+          Recent User Activity
+        </div>
+        <div class="card-body">
+          <ul class="list-group">
+            <li class="list-group-item">Amit Sharma completed "Phishing Awareness"</li>
+            <li class="list-group-item">Neha Gupta enrolled in "Password Hygiene"</li>
+            <li class="list-group-item">Ravi Patel failed latest phishing simulation</li>
+            <li class="list-group-item">Priya Singh earned a certificate</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- High Risk Users Table -->
+      <div class="card">
+        <div class="card-header">
+          High Risk Users (From Phishing Simulation)
+        </div>
+        <div class="card-body table-responsive">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Email</th>
+                <th>Clicked Link</th>
+                <th>Submitted Credentials</th>
+                <th>Risk Level</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Ravi Patel</td>
+                <td>ravi@company.com</td>
+                <td>Yes</td>
+                <td>Yes</td>
+                <td><span class="badge bg-danger">High Risk</span></td>
+              </tr>
+              <tr>
+                <td>Anita Desai</td>
+                <td>anita@company.com</td>
+                <td>Yes</td>
+                <td>No</td>
+                <td><span class="badge bg-warning">Medium Risk</span></td>
+              </tr>
+              <tr>
+                <td>Karan Mehta</td>
+                <td>karan@company.com</td>
+                <td>No</td>
+                <td>No</td>
+                <td><span class="badge bg-success">Safe</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CoreUI JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/js/coreui.bundle.min.js"></script>
+</body>
+</html>
 
