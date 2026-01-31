@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Reports</title>
+
+  <!-- CoreUI CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/css/coreui.min.css" rel="stylesheet">
+  <link href="/assets/css/custom.css" rel="stylesheet">
+</head>
+
+<body class="body">
+  <div class="d-flex">
+
+    <!-- Sidebar -->
+    <div class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
+      <div class="sidebar-brand d-none d-md-flex">
+        <h4 class="text-white">CySec Guardians</h4>
+      </div>
+
+      <ul class="sidebar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="/org-admin/index.html">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/org-admin/users.html">Users</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/org-admin/trainings.html">Trainings</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/org-admin/phishing.html">Phishing Simulation</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="/org-admin/reports.html">Reports</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/org-admin/settings.html">Settings</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container-fluid p-4">
+
+      <h2 class="mb-4">Compliance & Training Reports</h2>
+
+      <div class="row g-4">
+
+        <div class="col-md-4">
+          <div class="card text-center">
+            <div class="card-body">
+              <h5>Training Completion Report</h5>
+              <p>Download report of all users and their training status.</p>
+              <button class="btn btn-primary">Download Report</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card text-center">
+            <div class="card-body">
+              <h5>Phishing Simulation Report</h5>
+              <p>Detailed results of phishing campaigns and user behavior.</p>
+              <button class="btn btn-primary">Download Report</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card text-center">
+            <div class="card-body">
+              <h5>Compliance Status Report</h5>
+              <p>Overall organizational compliance and awareness metrics.</p>
+              <button class="btn btn-primary">Download Report</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CoreUI JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/js/coreui.bundle.min.js"></script>
+</body>
+</html>
