@@ -18,8 +18,8 @@
 
   <!-- Sidebar -->
   <aside class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
-    <div class="sidebar-brand d-none d-md-flex">
-      <strong>CySec</strong>Guardians
+    <div class="sidebar-brand d-none d-md-flex px-3 py-2">
+      <strong>CySec</strong>&nbsp;Guardians
     </div>
 
     <ul class="sidebar-nav">
@@ -41,48 +41,64 @@
     </ul>
   </aside>
 
-  <!-- Main content -->
+  <!-- Main Content -->
   <div class="body flex-grow-1">
 
     <main class="container-fluid p-4">
 
+      <!-- Welcome -->
       <h3 class="mb-4">Welcome back 👋</h3>
 
       <!-- KPI Cards -->
       <div class="row g-4">
 
+        <!-- Awareness Score -->
         <div class="col-12 col-sm-6 col-xl-3">
           <div class="card h-100">
             <div class="card-body">
-              <div class="text-medium-emphasis mb-1">Awareness Score</div>
-              <h3 class="fw-bold">78%</h3>
+              <div class="text-medium-emphasis mb-2">Awareness Score</div>
+              <h2 class="fw-bold mb-1">78%</h2>
+              <div class="text-success mb-3">Good awareness level</div>
+
+              <div class="progress" style="height: 8px;">
+                <div class="progress-bar bg-success"
+                     role="progressbar"
+                     style="width: 78%;"
+                     aria-valuenow="78"
+                     aria-valuemin="0"
+                     aria-valuemax="100">
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
+        <!-- Courses -->
         <div class="col-12 col-sm-6 col-xl-3">
           <div class="card h-100">
             <div class="card-body">
-              <div class="text-medium-emphasis mb-1">Courses Completed</div>
+              <div class="text-medium-emphasis mb-2">Courses Completed</div>
               <h3 class="fw-bold">6</h3>
             </div>
           </div>
         </div>
 
+        <!-- Certificates -->
         <div class="col-12 col-sm-6 col-xl-3">
           <div class="card h-100">
             <div class="card-body">
-              <div class="text-medium-emphasis mb-1">Certificates</div>
+              <div class="text-medium-emphasis mb-2">Certificates</div>
               <h3 class="fw-bold">2</h3>
             </div>
           </div>
         </div>
 
+        <!-- Exposure Alerts -->
         <div class="col-12 col-sm-6 col-xl-3">
           <div class="card h-100">
             <div class="card-body">
-              <div class="text-medium-emphasis mb-1">Exposure Alerts</div>
-              <h3 class="fw-bold">1</h3>
+              <div class="text-medium-emphasis mb-2">Exposure Alerts</div>
+              <h3 class="fw-bold text-danger">1</h3>
             </div>
           </div>
         </div>
