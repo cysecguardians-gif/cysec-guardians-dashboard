@@ -12,88 +12,84 @@
   <link href="/assets/css/custom.css" rel="stylesheet">
 </head>
 
-<body class="c-app">
+<body>
 
 <div class="wrapper d-flex">
 
   <!-- Sidebar -->
-  <div class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
-    <div class="sidebar-brand d-md-down-none">
+  <aside class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
+    <div class="sidebar-brand d-none d-md-flex">
       <strong>CySec</strong>Guardians
     </div>
 
     <ul class="sidebar-nav">
       <li class="nav-item">
-        <a class="nav-link active" href="/individual/">
-          Dashboard
-        </a>
+        <a class="nav-link active" href="/individual/">Dashboard</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">
-          Training & Awareness
-        </a>
+        <a class="nav-link" href="#">Training & Awareness</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">
-          Threat Exposure
-        </a>
+        <a class="nav-link" href="#">Threat Exposure</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">
-          Cyber Tips
-        </a>
+        <a class="nav-link" href="#">Cyber Tips</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">
-          Settings
-        </a>
+        <a class="nav-link" href="#">Settings</a>
       </li>
     </ul>
-  </div>
+  </aside>
 
-  <!-- Main -->
-  <div class="body flex-grow-1 px-3">
-    <div class="container-lg">
+  <!-- Main content -->
+  <div class="body flex-grow-1">
+
+    <main class="container-fluid p-4">
 
       <h3 class="mb-4">Welcome back 👋</h3>
 
       <!-- KPI Cards -->
-      <div class="row">
-        <div class="col-md-3">
-          <div class="card">
+      <div class="row g-4">
+
+        <div class="col-12 col-sm-6 col-xl-3">
+          <div class="card h-100">
             <div class="card-body">
-              <div class="text-medium-emphasis">Awareness Score</div>
-              <h4>78%</h4>
+              <div class="text-medium-emphasis mb-1">Awareness Score</div>
+              <h3 class="fw-bold">78%</h3>
             </div>
           </div>
         </div>
-        <div class="col-md-3">
-          <div class="card">
+
+        <div class="col-12 col-sm-6 col-xl-3">
+          <div class="card h-100">
             <div class="card-body">
-              <div class="text-medium-emphasis">Courses Completed</div>
-              <h4>6</h4>
+              <div class="text-medium-emphasis mb-1">Courses Completed</div>
+              <h3 class="fw-bold">6</h3>
             </div>
           </div>
         </div>
-        <div class="col-md-3">
-          <div class="card">
+
+        <div class="col-12 col-sm-6 col-xl-3">
+          <div class="card h-100">
             <div class="card-body">
-              <div class="text-medium-emphasis">Certificates</div>
-              <h4>2</h4>
+              <div class="text-medium-emphasis mb-1">Certificates</div>
+              <h3 class="fw-bold">2</h3>
             </div>
           </div>
         </div>
-        <div class="col-md-3">
-          <div class="card">
+
+        <div class="col-12 col-sm-6 col-xl-3">
+          <div class="card h-100">
             <div class="card-body">
-              <div class="text-medium-emphasis">Exposure Alerts</div>
-              <h4>1</h4>
+              <div class="text-medium-emphasis mb-1">Exposure Alerts</div>
+              <h3 class="fw-bold">1</h3>
             </div>
           </div>
         </div>
+
       </div>
 
-    </div>
+    </main>
   </div>
 </div>
 
@@ -102,4 +98,3 @@
 
 </body>
 </html>
-
