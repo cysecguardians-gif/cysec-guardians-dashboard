@@ -1,1 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Org User Dashboard</title>
+
+  <!-- CoreUI CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/css/coreui.min.css" rel="stylesheet">
+  <link href="/assets/css/custom.css" rel="stylesheet">
+</head>
+
+<body class="body">
+  <div class="d-flex">
+
+    <!-- Sidebar -->
+    <div class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
+      <div class="sidebar-brand d-none d-md-flex">
+        <h4 class="text-white">CySec Guardians</h4>
+      </div>
+
+      <ul class="sidebar-nav">
+        <li class="nav-item">
+          <a class="nav-link active" href="/org-user/index.html">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/org-user/training.html">Trainings</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/org-user/cyber-tips.html">Cyber Tips</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/org-user/settings.html">Settings</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container-fluid p-4">
+
+      <h2 class="mb-4">Organization Training Dashboard</h2>
+
+      <!-- KPI Cards -->
+      <div class="row g-4">
+        <div class="col-md-3">
+          <div class="card text-center">
+            <div class="card-body">
+              <h6>Awareness Score</h6>
+              <h2 class="text-primary">82%</h2>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card text-center">
+            <div class="card-body">
+              <h6>Courses Completed</h6>
+              <h2 class="text-success">12</h2>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card text-center">
+            <div class="card-body">
+              <h6>Certificates Earned</h6>
+              <h2 class="text-info">5</h2>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card text-center">
+            <div class="card-body">
+              <h6>Compliance Progress</h6>
+              <h2 class="text-warning">70%</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Assigned Trainings Preview -->
+      <div class="card mt-5">
+        <div class="card-header">
+          Assigned Trainings
+        </div>
+        <div class="card-body">
+          <ul class="list-group">
+            <li class="list-group-item d-flex justify-content-between">
+              Phishing Awareness Program
+              <span class="badge bg-primary">Assigned</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              Data Protection & Compliance
+              <span class="badge bg-primary">Assigned</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              Secure Password Practices
+              <span class="badge bg-primary">Assigned</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="card mt-4">
+        <div class="card-header">
+          Recent Activity
+        </div>
+        <div class="card-body">
+          <ul class="list-group">
+            <li class="list-group-item">Completed: Social Engineering Basics</li>
+            <li class="list-group-item">Enrolled: Email Security Essentials</li>
+            <li class="list-group-item">Certificate Earned: Phishing Awareness</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CoreUI JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/js/coreui.bundle.min.js"></script>
+</body>
+</html>
 
