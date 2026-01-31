@@ -9,8 +9,6 @@
   <link href="/assets/css/custom.css" rel="stylesheet">
 </head>
 
-<script src="/assets/js/api.js"></script>
-  
 <body class="body">
   <div class="d-flex">
 
@@ -47,9 +45,12 @@
 
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Organization Users</h2>
-        <button class="btn btn-primary">Add User</button>
+        <button class="btn btn-primary" data-coreui-toggle="modal" data-coreui-target="#addUserModal">
+          Add User
+        </button>
       </div>
 
+      <!-- Users Table -->
       <div class="card">
         <div class="card-body table-responsive">
           <table class="table table-bordered table-hover">
@@ -63,39 +64,8 @@
                 <th>Status</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td>Amit Sharma</td>
-                <td>amit@company.com</td>
-                <td>Finance</td>
-                <td>88%</td>
-                <td>10</td>
-                <td><span class="badge bg-success">Compliant</span></td>
-              </tr>
-              <tr>
-                <td>Neha Gupta</td>
-                <td>neha@company.com</td>
-                <td>HR</td>
-                <td>72%</td>
-                <td>6</td>
-                <td><span class="badge bg-warning">Pending</span></td>
-              </tr>
-              <tr>
-                <td>Ravi Patel</td>
-                <td>ravi@company.com</td>
-                <td>IT</td>
-                <td>55%</td>
-                <td>4</td>
-                <td><span class="badge bg-danger">At Risk</span></td>
-              </tr>
-              <tr>
-                <td>Priya Singh</td>
-                <td>priya@company.com</td>
-                <td>Operations</td>
-                <td>91%</td>
-                <td>12</td>
-                <td><span class="badge bg-success">Compliant</span></td>
-              </tr>
+            <tbody id="usersTableBody">
+              <!-- Will be dynamic later -->
             </tbody>
           </table>
         </div>
@@ -104,7 +74,62 @@
     </div>
   </div>
 
+  <!-- Add User Modal -->
+  <div class="modal fade" id="addUserModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Employee</h5>
+          <button type="button" class="btn-close" data-coreui-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+
+          <div class="mb-3">
+            <label>Name</label>
+            <input type="text" id="empName" class="form-control">
+          </div>
+
+          <div class="mb-3">
+            <label>Email</label>
+            <input type="email" id="empEmail" class="form-control">
+          </div>
+
+          <div class="mb-3">
+            <label>Department</label>
+            <input type="text" id="empDept" class="form-control">
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" onclick="addEmployee()">Add</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- CoreUI JS -->
   <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/js/coreui.bundle.min.js"></script>
+  <script src="/assets/js/api.js"></script>
+
+  <script>
+    async function addEmployee() {
+      const name = document.getElementById("empName").value;
+      const email = document.getElementById("empEmail").value;
+      const dept = document.getElementById("empDept").value;
+
+      const org_id = "PUT_YOUR_ORG_ID_HERE";
+
+      await apiPost("/employees", {
+        org_id: org_id,
+        name: name,
+        email: email,
+        department: dept
+      });
+
+      alert("Employee added successfully!");
+      location.reload();
+    }
+  </script>
+
 </body>
 </html>
