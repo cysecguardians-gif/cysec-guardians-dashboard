@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Phishing Simulation</title>
 
   <!-- CoreUI CSS -->
@@ -9,8 +10,8 @@
   <link href="/assets/css/custom.css" rel="stylesheet">
 </head>
 
-<body class="body">
-  <div class="d-flex">
+<body>
+  <div class="wrapper">
 
     <!-- Sidebar -->
     <div class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
@@ -23,15 +24,15 @@
           <a class="nav-link" href="/org-admin/index.html">Dashboard</a>
         </li>
 
-        <li class="nav-item admin-only">
+        <li class="nav-item">
           <a class="nav-link" href="/org-admin/users.html">Users</a>
         </li>
 
-        <li class="nav-item menu-training">
+        <li class="nav-item" id="menu-training">
           <a class="nav-link" href="/org-admin/trainings.html">Trainings</a>
         </li>
 
-        <li class="nav-item menu-phishing">
+        <li class="nav-item" id="menu-phishing">
           <a class="nav-link active" href="/org-admin/phishing.html">Phishing Simulation</a>
         </li>
 
@@ -49,31 +50,39 @@
       </ul>
     </div>
 
-    <!-- Main Content -->
-    <div class="container-fluid p-4">
+    <!-- Main Wrapper -->
+    <div class="wrapper d-flex flex-column min-vh-100 bg-light">
 
-      <h2 class="mb-4">Phishing Simulation Control Center</h2>
+      <header class="header header-sticky"></header>
 
-      <div class="card">
-        <div class="card-body table-responsive">
-          <table class="table table-bordered">
-            <thead>
-              <tr>
-                <th>Campaign Name</th>
-                <th>Status</th>
-                <th>Launch Date</th>
-              </tr>
-            </thead>
-            <tbody id="campaignTable">
-              <tr>
-                <td colspan="3" class="text-center">Loading campaigns...</td>
-              </tr>
-            </tbody>
-          </table>
+      <div class="body flex-grow-1 px-3">
+        <div class="container-lg">
+
+          <h2 class="mb-4">Phishing Simulation Control Center</h2>
+
+          <div class="card">
+            <div class="card-body table-responsive">
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>Campaign Name</th>
+                    <th>Status</th>
+                    <th>Launch Date</th>
+                  </tr>
+                </thead>
+                <tbody id="campaignTable">
+                  <tr>
+                    <td colspan="3" class="text-center">Loading campaigns...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
         </div>
       </div>
-
     </div>
+
   </div>
 
   <!-- CoreUI JS -->
