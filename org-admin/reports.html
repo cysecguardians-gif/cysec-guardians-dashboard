@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Reports</title>
 
   <!-- CoreUI CSS -->
@@ -9,8 +10,8 @@
   <link href="/assets/css/custom.css" rel="stylesheet">
 </head>
 
-<body class="body">
-  <div class="d-flex">
+<body>
+  <div class="wrapper">
 
     <!-- Sidebar -->
     <div class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
@@ -23,15 +24,15 @@
           <a class="nav-link" href="/org-admin/index.html">Dashboard</a>
         </li>
 
-        <li class="nav-item admin-only">
+        <li class="nav-item">
           <a class="nav-link" href="/org-admin/users.html">Users</a>
         </li>
 
-        <li class="nav-item menu-training">
+        <li class="nav-item" id="menu-training">
           <a class="nav-link" href="/org-admin/trainings.html">Trainings</a>
         </li>
 
-        <li class="nav-item menu-phishing">
+        <li class="nav-item" id="menu-phishing">
           <a class="nav-link" href="/org-admin/phishing.html">Phishing Simulation</a>
         </li>
 
@@ -49,46 +50,54 @@
       </ul>
     </div>
 
-    <!-- Main Content -->
-    <div class="container-fluid p-4">
+    <!-- Main Wrapper -->
+    <div class="wrapper d-flex flex-column min-vh-100 bg-light">
 
-      <h2 class="mb-4">Compliance & Training Reports</h2>
+      <header class="header header-sticky"></header>
 
-      <div class="row g-4">
+      <div class="body flex-grow-1 px-3">
+        <div class="container-lg">
 
-        <div class="col-md-4">
-          <div class="card text-center">
-            <div class="card-body">
-              <h5>Training Completion Report</h5>
-              <p>Download report of all users and their training status.</p>
-              <button class="btn btn-primary">Download Report</button>
+          <h2 class="mb-4">Compliance & Training Reports</h2>
+
+          <div class="row g-4">
+
+            <div class="col-md-4">
+              <div class="card text-center">
+                <div class="card-body">
+                  <h5>Training Completion Report</h5>
+                  <p>Download report of all users and their training status.</p>
+                  <button class="btn btn-primary">Download Report</button>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
 
-        <div class="col-md-4">
-          <div class="card text-center">
-            <div class="card-body">
-              <h5>Phishing Simulation Report</h5>
-              <p>Detailed results of phishing campaigns and user behavior.</p>
-              <button class="btn btn-primary">Download Report</button>
+            <div class="col-md-4">
+              <div class="card text-center">
+                <div class="card-body">
+                  <h5>Phishing Simulation Report</h5>
+                  <p>Detailed results of phishing campaigns and user behavior.</p>
+                  <button class="btn btn-primary">Download Report</button>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
 
-        <div class="col-md-4">
-          <div class="card text-center">
-            <div class="card-body">
-              <h5>Compliance Status Report</h5>
-              <p>Overall organizational compliance and awareness metrics.</p>
-              <button class="btn btn-primary">Download Report</button>
+            <div class="col-md-4">
+              <div class="card text-center">
+                <div class="card-body">
+                  <h5>Compliance Status Report</h5>
+                  <p>Overall organizational compliance and awareness metrics.</p>
+                  <button class="btn btn-primary">Download Report</button>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
 
+          </div>
+
+        </div>
       </div>
-
     </div>
+
   </div>
 
   <!-- CoreUI JS -->
