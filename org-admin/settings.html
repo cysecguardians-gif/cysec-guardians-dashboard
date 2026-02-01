@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin Settings</title>
 
   <!-- CoreUI CSS -->
@@ -9,8 +10,8 @@
   <link href="/assets/css/custom.css" rel="stylesheet">
 </head>
 
-<body class="body">
-  <div class="d-flex">
+<body>
+  <div class="wrapper">
 
     <!-- Sidebar -->
     <div class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
@@ -23,15 +24,15 @@
           <a class="nav-link" href="/org-admin/index.html">Dashboard</a>
         </li>
 
-        <li class="nav-item admin-only">
+        <li class="nav-item">
           <a class="nav-link" href="/org-admin/users.html">Users</a>
         </li>
 
-        <li class="nav-item menu-training">
+        <li class="nav-item" id="menu-training">
           <a class="nav-link" href="/org-admin/trainings.html">Trainings</a>
         </li>
 
-        <li class="nav-item menu-phishing">
+        <li class="nav-item" id="menu-phishing">
           <a class="nav-link" href="/org-admin/phishing.html">Phishing Simulation</a>
         </li>
 
@@ -49,50 +50,58 @@
       </ul>
     </div>
 
-    <!-- Main Content -->
-    <div class="container-fluid p-4">
+    <!-- Main Wrapper -->
+    <div class="wrapper d-flex flex-column min-vh-100 bg-light">
 
-      <h2 class="mb-4">Organization Settings</h2>
+      <header class="header header-sticky"></header>
 
-      <!-- Organization Info -->
-      <div class="card mb-4">
-        <div class="card-body">
-          <h5>Organization Information</h5>
-          <div class="mb-3">
-            <label class="form-label">Organization Name</label>
-            <input type="text" class="form-control" value="ABC Financial Services Pvt Ltd">
+      <div class="body flex-grow-1 px-3">
+        <div class="container-lg">
+
+          <h2 class="mb-4">Organization Settings</h2>
+
+          <!-- Organization Info -->
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5>Organization Information</h5>
+              <div class="mb-3">
+                <label class="form-label">Organization Name</label>
+                <input type="text" class="form-control" value="ABC Financial Services Pvt Ltd">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Admin Email</label>
+                <input type="email" class="form-control" value="admin@company.com">
+              </div>
+            </div>
           </div>
-          <div class="mb-3">
-            <label class="form-label">Admin Email</label>
-            <input type="email" class="form-control" value="admin@company.com">
+
+          <!-- Notification Preferences -->
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5>Notification Preferences</h5>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" checked>
+                <label class="form-check-label">Phishing campaign alerts</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" checked>
+                <label class="form-check-label">Training completion summaries</label>
+              </div>
+            </div>
           </div>
+
+          <!-- Security -->
+          <div class="card">
+            <div class="card-body">
+              <h5>Security</h5>
+              <button class="btn btn-warning">Change Password</button>
+            </div>
+          </div>
+
         </div>
       </div>
-
-      <!-- Notification Preferences -->
-      <div class="card mb-4">
-        <div class="card-body">
-          <h5>Notification Preferences</h5>
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" checked>
-            <label class="form-check-label">Phishing campaign alerts</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" checked>
-            <label class="form-check-label">Training completion summaries</label>
-          </div>
-        </div>
-      </div>
-
-      <!-- Security -->
-      <div class="card">
-        <div class="card-body">
-          <h5>Security</h5>
-          <button class="btn btn-warning">Change Password</button>
-        </div>
-      </div>
-
     </div>
+
   </div>
 
   <!-- CoreUI JS -->
