@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - CySec Guardians</title>
+  <link href="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/css/coreui.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light d-flex align-items-center justify-content-center" style="height:100vh;">
+
+  <div class="card p-4" style="width:400px;">
+    <h3 class="text-center mb-4">CySec Guardians Login</h3>
+
+    <div class="mb-3">
+      <label>Email</label>
+      <input type="email" id="email" class="form-control">
+    </div>
+
+    <div class="mb-3">
+      <label>Password</label>
+      <input type="password" id="password" class="form-control">
+    </div>
+
+    <button class="btn btn-primary w-100" onclick="login()">Login</button>
+
+    <hr>
+
+    <button class="btn btn-danger w-100" onclick="googleLogin()">
+      Sign in with Google Workspace
+    </button>
+  </div>
+
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    const SUPABASE_URL = "https://kixiivyujleisywstuaj.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_8U8eGmYfORuuXGMkTpa2Lg_z2hr2wSC";
+
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    async function login() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      const token = data.session.access_token;
+      localStorage.setItem("auth_token", token);
+
+      routeUser();
+    }
+
+    function googleLogin() {
+      window.location.href = "https://cysec-backend.onrender.com/google/auth-url";
+    }
+
+    async function routeUser() {
+      const res = await fetch("https://cysec-backend.onrender.com/organizations", {
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem("auth_token")
+        }
+      });
+
+      const orgs = await res.json();
+
+      // Save org context
+      localStorage.setItem("org_id", orgs[0].id);
+
+      // Temporary: route all to admin (we'll refine roles next)
+      window.location.href = "/org-admin/index.html";
+    }
+  </script>
+
+</body>
+</html>
