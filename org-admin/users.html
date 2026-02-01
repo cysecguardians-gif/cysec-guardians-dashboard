@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>Manage Users</title>
 
-  <!-- CoreUI CSS -->
   <link href="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/css/coreui.min.css" rel="stylesheet">
   <link href="/assets/css/custom.css" rel="stylesheet">
 </head>
@@ -19,24 +18,12 @@
       </div>
 
       <ul class="sidebar-nav">
-        <li class="nav-item">
-          <a class="nav-link" href="/org-admin/index.html">Dashboard</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active" href="/org-admin/users.html">Users</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/org-admin/trainings.html">Trainings</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/org-admin/phishing.html">Phishing Simulation</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/org-admin/reports.html">Reports</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/org-admin/settings.html">Settings</a>
-        </li>
+        <li class="nav-item"><a class="nav-link" href="/org-admin/index.html">Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link active" href="/org-admin/users.html">Users</a></li>
+        <li class="nav-item"><a class="nav-link" href="/org-admin/trainings.html">Trainings</a></li>
+        <li class="nav-item"><a class="nav-link" href="/org-admin/phishing.html">Phishing Simulation</a></li>
+        <li class="nav-item"><a class="nav-link" href="/org-admin/reports.html">Reports</a></li>
+        <li class="nav-item"><a class="nav-link" href="/org-admin/settings.html">Settings</a></li>
       </ul>
     </div>
 
@@ -50,7 +37,6 @@
         </button>
       </div>
 
-      <!-- Users Table -->
       <div class="card">
         <div class="card-body table-responsive">
           <table class="table table-bordered table-hover">
@@ -59,14 +45,9 @@
                 <th>Name</th>
                 <th>Email</th>
                 <th>Department</th>
-                <th>Awareness Score</th>
-                <th>Trainings Completed</th>
-                <th>Status</th>
               </tr>
             </thead>
-            <tbody id="usersTableBody">
-              <!-- Will be dynamic later -->
-            </tbody>
+            <tbody id="usersTableBody"></tbody>
           </table>
         </div>
       </div>
@@ -83,22 +64,18 @@
           <button type="button" class="btn-close" data-coreui-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-
           <div class="mb-3">
             <label>Name</label>
             <input type="text" id="empName" class="form-control">
           </div>
-
           <div class="mb-3">
             <label>Email</label>
             <input type="email" id="empEmail" class="form-control">
           </div>
-
           <div class="mb-3">
             <label>Department</label>
             <input type="text" id="empDept" class="form-control">
           </div>
-
         </div>
         <div class="modal-footer">
           <button class="btn btn-primary" onclick="addEmployee()">Add</button>
@@ -107,17 +84,42 @@
     </div>
   </div>
 
-  <!-- CoreUI JS -->
   <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/js/coreui.bundle.min.js"></script>
   <script src="/assets/js/api.js"></script>
 
   <script>
+    async function getOrgContext() {
+      const res = await apiGet("/me");
+      localStorage.setItem("org_id", res.org_id);
+      localStorage.setItem("role", res.role);
+      return res.org_id;
+    }
+
+    async function loadEmployees() {
+      const org_id = await getOrgContext();
+      const employees = await apiGet(`/employees?org_id=${org_id}`);
+
+      const table = document.getElementById("usersTableBody");
+      table.innerHTML = "";
+
+      employees.forEach(emp => {
+        const row = `
+          <tr>
+            <td>${emp.name}</td>
+            <td>${emp.email}</td>
+            <td>${emp.department || ""}</td>
+          </tr>
+        `;
+        table.innerHTML += row;
+      });
+    }
+
     async function addEmployee() {
       const name = document.getElementById("empName").value;
       const email = document.getElementById("empEmail").value;
       const dept = document.getElementById("empDept").value;
 
-      const org_id = "PUT_YOUR_ORG_ID_HERE";
+      const org_id = localStorage.getItem("org_id");
 
       await apiPost("/employees", {
         org_id: org_id,
@@ -126,9 +128,10 @@
         department: dept
       });
 
-      alert("Employee added successfully!");
       location.reload();
     }
+
+    loadEmployees();
   </script>
 
 </body>
