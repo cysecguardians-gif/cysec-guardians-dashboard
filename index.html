@@ -1,14 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>CySec Guardians Dashboards</title>
+  <meta charset="UTF-8" />
+  <script>
+    const host = window.location.hostname;
+
+    if (host.startsWith("admin.")) {
+      window.location.href = "/login.html";
+    }
+    else if (host.startsWith("app.")) {
+      window.location.href = "/login.html";
+    }
+    else if (host.startsWith("user.")) {
+      window.location.href = "/login.html";
+    }
+    else {
+      // fallback (should never happen)
+      window.location.href = "/login.html";
+    }
+  </script>
 </head>
-<body>
-  <h2>CySec Guardians Dashboards</h2>
-  <ul>
-    <li><a href="/individual/">Individual Dashboard</a></li>
-    <li><a href="/org-user/">Org User Dashboard</a></li>
-    <li><a href="/org-admin/">Org Admin Dashboard</a></li>
-  </ul>
-</body>
+<body></body>
 </html>
