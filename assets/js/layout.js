@@ -1,6 +1,5 @@
 async function initLayout() {
   const token = localStorage.getItem("auth_token");
-
   if (!token) {
     window.location.href = "/login.html";
     return;
@@ -12,17 +11,22 @@ async function initLayout() {
 
   const me = await res.json();
 
+  // Hide entire sidebar until rules applied
+  document.getElementById("sidebar").style.visibility = "hidden";
+
   if (!me.training_enabled) {
-    document.querySelectorAll(".menu-training").forEach(e => e.style.display = "none");
+    document.querySelectorAll(".menu-training").forEach(e => e.remove());
   }
 
   if (!me.phishing_enabled) {
-    document.querySelectorAll(".menu-phishing").forEach(e => e.style.display = "none");
+    document.querySelectorAll(".menu-phishing").forEach(e => e.remove());
   }
 
   if (me.role !== "admin") {
-    document.querySelectorAll(".admin-only").forEach(e => e.style.display = "none");
+    document.querySelectorAll(".admin-only").forEach(e => e.remove());
   }
+
+  document.getElementById("sidebar").style.visibility = "visible";
 }
 
 function logout() {
