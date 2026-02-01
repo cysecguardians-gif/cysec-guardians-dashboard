@@ -4,175 +4,98 @@
   <meta charset="UTF-8">
   <title>Phishing Simulation</title>
 
-  <!-- CoreUI CSS -->
   <link href="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/css/coreui.min.css" rel="stylesheet">
   <link href="/assets/css/custom.css" rel="stylesheet">
 </head>
 
-<script src="/assets/js/api.js"></script>
-<script src="/assets/js/layout.js"></script>  
-<body class="body">
-  <div class="d-flex">
+<body>
 
-    <!-- Sidebar -->
-    <div class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
-      <div class="sidebar-brand d-none d-md-flex">
-        <h4 class="text-white">CySec Guardians</h4>
-      </div>
+<div class="wrapper d-flex">
 
-      <ul class="sidebar-nav">
-        <li class="nav-item"><a class="nav-link" href="/org-admin/index.html">Dashboard</a></li>
-        <li class="nav-item"><a class="nav-link" href="/org-admin/users.html">Users</a></li>
-        <li class="nav-item"><a class="nav-link" href="/org-admin/trainings.html">Trainings</a></li>
-        <li class="nav-item"><a class="nav-link active" href="/org-admin/phishing.html">Phishing Simulation</a></li>
-        <li class="nav-item"><a class="nav-link" href="/org-admin/reports.html">Reports</a></li>
-        <li class="nav-item"><a class="nav-link" href="/org-admin/settings.html">Settings</a></li>
-      </ul>
+  <!-- Sidebar -->
+  <div class="sidebar sidebar-dark sidebar-fixed">
+    <div class="sidebar-brand d-none d-md-flex">
+      <h4 class="text-white">CySec Guardians</h4>
     </div>
 
-    <!-- Main Content -->
-    <div class="container-fluid p-4">
+    <ul class="sidebar-nav d-flex flex-column h-100">
+      <li class="nav-item">
+        <a class="nav-link" href="/org-admin/index.html">Dashboard</a>
+      </li>
 
-      <h2 class="mb-4">Phishing Simulation Control Center</h2>
+      <li class="nav-item admin-only">
+        <a class="nav-link" href="/org-admin/users.html">Users</a>
+      </li>
 
-      <!-- Create Campaign -->
-      <div class="card mb-4">
-        <div class="card-header">
-          Create Phishing Campaign
-        </div>
-        <div class="card-body">
+      <li class="nav-item menu-training">
+        <a class="nav-link" href="/org-admin/trainings.html">Trainings</a>
+      </li>
 
-          <div class="mb-3">
-            <label class="form-label">Campaign Name</label>
-            <input type="text" class="form-control" placeholder="e.g. Payroll Update Scam - March">
-          </div>
+      <li class="nav-item menu-phishing">
+        <a class="nav-link active" href="/org-admin/phishing.html">Phishing Simulation</a>
+      </li>
 
-          <label class="form-label">Template Option</label>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="templateOption" checked>
-            <label class="form-check-label">Use Predefined Template</label>
-          </div>
-          <div class="form-check mb-3">
-            <input class="form-check-input" type="radio" name="templateOption">
-            <label class="form-check-label">Create New Template</label>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Select Template</label>
-            <select class="form-select">
-              <option>Invoice Scam</option>
-              <option>Password Reset Alert</option>
-              <option>HR Policy Update</option>
-            </select>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Or Write Custom Email</label>
-            <textarea class="form-control" rows="4" placeholder="Write phishing email content here..."></textarea>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Select Target Users</label>
-            <input type="file" class="form-control">
-            <small class="text-muted">Upload CSV or select users (future integration)</small>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Schedule Date</label>
-            <input type="datetime-local" class="form-control">
-          </div>
-
-          <button class="btn btn-danger">Launch Campaign</button>
-
-        </div>
-      </div>
-
-      <!-- Campaign History -->
-      <div class="card mb-4">
-        <div class="card-header">Campaign History</div>
-        <div class="card-body table-responsive">
-          <table class="table table-bordered">
-            <thead class="table-light">
-              <tr>
-                <th>Campaign</th>
-                <th>Sent</th>
-                <th>Clicked</th>
-                <th>Submitted</th>
-                <th>Reported</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Invoice Scam - Jan</td>
-                <td>120</td>
-                <td>38</td>
-                <td>12</td>
-                <td>50</td>
-                <td><span class="badge bg-success">Completed</span></td>
-              </tr>
-              <tr>
-                <td>Password Reset - Feb</td>
-                <td>120</td>
-                <td>30</td>
-                <td>9</td>
-                <td>62</td>
-                <td><span class="badge bg-warning">Ongoing</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- User Risk Analysis -->
-      <div class="card">
-        <div class="card-header">User Risk Analysis</div>
-        <div class="card-body table-responsive">
-          <table class="table table-bordered">
-            <thead class="table-light">
-              <tr>
-                <th>User</th>
-                <th>Email</th>
-                <th>Clicked</th>
-                <th>Submitted</th>
-                <th>Reported</th>
-                <th>Risk Level</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Ravi Patel</td>
-                <td>ravi@company.com</td>
-                <td>Yes</td>
-                <td>Yes</td>
-                <td>No</td>
-                <td><span class="badge bg-danger">High Risk</span></td>
-              </tr>
-              <tr>
-                <td>Anita Desai</td>
-                <td>anita@company.com</td>
-                <td>Yes</td>
-                <td>No</td>
-                <td>No</td>
-                <td><span class="badge bg-warning">Medium Risk</span></td>
-              </tr>
-              <tr>
-                <td>Karan Mehta</td>
-                <td>karan@company.com</td>
-                <td>No</td>
-                <td>No</td>
-                <td>Yes</td>
-                <td><span class="badge bg-success">Safe</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-    </div>
+      <li class="nav-item mt-auto">
+        <a class="nav-link text-danger" href="#" onclick="logout()">Logout</a>
+      </li>
+    </ul>
   </div>
 
-  <!-- CoreUI JS -->
-  <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/js/coreui.bundle.min.js"></script>
+  <!-- Main Content -->
+  <div class="main-content flex-grow-1 p-4">
+
+    <h2 class="mb-4">Phishing Simulation Control Center</h2>
+
+    <button class="btn btn-primary mb-3" onclick="loadCampaigns()">
+      Refresh Campaigns
+    </button>
+
+    <div class="card">
+      <div class="card-body table-responsive">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Campaign Name</th>
+              <th>Status</th>
+              <th>Created Date</th>
+            </tr>
+          </thead>
+          <tbody id="campaignTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/js/coreui.bundle.min.js"></script>
+<script src="/assets/js/layout.js"></script>
+
+<script>
+async function loadCampaigns() {
+  const token = localStorage.getItem("auth_token");
+
+  const res = await fetch("https://cysec-backend.onrender.com/phishing/campaigns", {
+    headers: { "Authorization": "Bearer " + token }
+  });
+
+  const campaigns = await res.json();
+  const table = document.getElementById("campaignTable");
+  table.innerHTML = "";
+
+  campaigns.forEach(c => {
+    table.innerHTML += `
+      <tr>
+        <td>${c.name}</td>
+        <td>${c.status}</td>
+        <td>${c.created_date || ""}</td>
+      </tr>
+    `;
+  });
+}
+
+loadCampaigns();
+</script>
+
 </body>
 </html>
