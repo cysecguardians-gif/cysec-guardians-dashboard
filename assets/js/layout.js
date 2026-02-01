@@ -1,3 +1,7 @@
+if (!localStorage.getItem("auth_token")) {
+  window.location.href = "/login.html";
+}
+
 async function initLayout() {
   const token = localStorage.getItem("auth_token");
   if (!token) {
