@@ -11,22 +11,33 @@ async function initLayout() {
 
   const me = await res.json();
 
-  // Hide entire sidebar until rules applied
-  document.getElementById("sidebar").style.visibility = "hidden";
+  const sidebar = document.getElementById("sidebar");
+  sidebar.style.visibility = "hidden";
 
+  // Hide by CSS, DO NOT remove
   if (!me.training_enabled) {
-    document.querySelectorAll(".menu-training").forEach(e => e.remove());
+    document.querySelectorAll(".menu-training").forEach(e => {
+      e.style.display = "none";
+    });
   }
 
   if (!me.phishing_enabled) {
-    document.querySelectorAll(".menu-phishing").forEach(e => e.remove());
+    document.querySelectorAll(".menu-phishing").forEach(e => {
+      e.style.display = "none";
+    });
   }
 
   if (me.role !== "admin") {
-    document.querySelectorAll(".admin-only").forEach(e => e.remove());
+    document.querySelectorAll(".admin-only").forEach(e => {
+      e.style.display = "none";
+    });
   }
 
-  document.getElementById("sidebar").style.visibility = "visible";
+  // Force CoreUI to recalc layout after visibility changes
+  setTimeout(() => {
+    sidebar.style.visibility = "visible";
+    window.dispatchEvent(new Event('resize'));
+  }, 50);
 }
 
 function logout() {
