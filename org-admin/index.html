@@ -18,7 +18,7 @@
         <h4 class="text-white">CySec Guardians</h4>
       </div>
 
-      <ul class="sidebar-nav">
+      <ul class="sidebar-nav d-flex flex-column h-100">
         <li class="nav-item">
           <a class="nav-link active" href="/org-admin/index.html">Dashboard</a>
         </li>
@@ -36,6 +36,11 @@
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/org-admin/settings.html">Settings</a>
+        </li>
+
+        <!-- Logout at bottom -->
+        <li class="nav-item mt-auto">
+          <a class="nav-link text-danger" href="#" onclick="logout()">Logout</a>
         </li>
       </ul>
     </div>
@@ -95,9 +100,7 @@
 
       <!-- Recent User Activity -->
       <div class="card mb-4">
-        <div class="card-header">
-          Recent User Activity
-        </div>
+        <div class="card-header">Recent User Activity</div>
         <div class="card-body">
           <ul class="list-group">
             <li class="list-group-item">Amit Sharma completed "Phishing Awareness"</li>
@@ -110,9 +113,7 @@
 
       <!-- High Risk Users Table -->
       <div class="card">
-        <div class="card-header">
-          High Risk Users (From Phishing Simulation)
-        </div>
+        <div class="card-header">High Risk Users (From Phishing Simulation)</div>
         <div class="card-body table-responsive">
           <table class="table table-bordered">
             <thead>
@@ -156,6 +157,20 @@
 
   <!-- CoreUI JS -->
   <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/js/coreui.bundle.min.js"></script>
+
+  <script>
+    // 🔒 Auth guard
+    if (!localStorage.getItem("auth_token")) {
+      window.location.href = "/login.html";
+    }
+
+    function logout() {
+      localStorage.removeItem("auth_token");
+      localStorage.removeItem("org_id");
+      localStorage.removeItem("role");
+      window.location.href = "/login.html";
+    }
+  </script>
+
 </body>
 </html>
-
