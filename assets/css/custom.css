@@ -1,7 +1,9 @@
-body {
-  overflow-x: hidden;
+.body {
+  margin-left: 260px;
 }
 
-.sidebar {
-  min-height: 100vh;
+@media (max-width: 991.98px) {
+  .body {
+    margin-left: 0;
+  }
 }
