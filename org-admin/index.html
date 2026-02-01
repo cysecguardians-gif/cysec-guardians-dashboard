@@ -4,109 +4,110 @@
   <meta charset="UTF-8">
   <title>Org Admin Dashboard</title>
 
+  <!-- CoreUI CSS -->
   <link href="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/css/coreui.min.css" rel="stylesheet">
   <link href="/assets/css/custom.css" rel="stylesheet">
 </head>
 
-<body>
+<body class="body">
+  <div class="d-flex">
 
-<div class="wrapper d-flex">
+    <!-- Sidebar -->
+    <div class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
+      <div class="sidebar-brand d-none d-md-flex">
+        <h4 class="text-white">CySec Guardians</h4>
+      </div>
 
-  <!-- Sidebar -->
-  <div class="sidebar sidebar-dark sidebar-fixed">
-    <div class="sidebar-brand d-none d-md-flex">
-      <h4 class="text-white">CySec Guardians</h4>
+      <ul class="sidebar-nav d-flex flex-column h-100">
+        <li class="nav-item">
+          <a class="nav-link active" href="/org-admin/index.html">Dashboard</a>
+        </li>
+
+        <li class="nav-item admin-only">
+          <a class="nav-link" href="/org-admin/users.html">Users</a>
+        </li>
+
+        <li class="nav-item menu-training">
+          <a class="nav-link" href="/org-admin/trainings.html">Trainings</a>
+        </li>
+
+        <li class="nav-item menu-phishing">
+          <a class="nav-link" href="/org-admin/phishing.html">Phishing Simulation</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="/org-admin/reports.html">Reports</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="/org-admin/settings.html">Settings</a>
+        </li>
+
+        <li class="nav-item mt-auto">
+          <a class="nav-link text-danger" href="#" onclick="logout()">Logout</a>
+        </li>
+      </ul>
     </div>
 
-    <ul class="sidebar-nav d-flex flex-column h-100">
-      <li class="nav-item">
-        <a class="nav-link active" href="/org-admin/index.html">Dashboard</a>
-      </li>
+    <!-- Main Content -->
+    <div class="container-fluid p-4">
 
-      <li class="nav-item admin-only">
-        <a class="nav-link" href="/org-admin/users.html">Users</a>
-      </li>
+      <h2 class="mb-4">Organization Security Overview</h2>
 
-      <li class="nav-item menu-training">
-        <a class="nav-link" href="/org-admin/trainings.html">Trainings</a>
-      </li>
+      <!-- KPI Row -->
+      <div class="row g-4 mb-4">
+        <div class="col-md-2">
+          <div class="card text-center">
+            <div class="card-body">
+              <h6>Total Users</h6>
+              <h3>--</h3>
+            </div>
+          </div>
+        </div>
 
-      <li class="nav-item menu-phishing">
-        <a class="nav-link" href="/org-admin/phishing.html">Phishing Simulation</a>
-      </li>
+        <div class="col-md-2">
+          <div class="card text-center">
+            <div class="card-body">
+              <h6>Compliant Users</h6>
+              <h3 class="text-success">--</h3>
+            </div>
+          </div>
+        </div>
 
-      <li class="nav-item">
-        <a class="nav-link" href="/org-admin/reports.html">Reports</a>
-      </li>
+        <div class="col-md-2">
+          <div class="card text-center">
+            <div class="card-body">
+              <h6>Pending Training</h6>
+              <h3 class="text-warning">--</h3>
+            </div>
+          </div>
+        </div>
 
-      <li class="nav-item">
-        <a class="nav-link" href="/org-admin/settings.html">Settings</a>
-      </li>
+        <div class="col-md-3">
+          <div class="card text-center">
+            <div class="card-body">
+              <h6>Failed Last Phishing Simulation</h6>
+              <h3 class="text-danger">--</h3>
+            </div>
+          </div>
+        </div>
 
-      <li class="nav-item mt-auto">
-        <a class="nav-link text-danger" href="#" onclick="logout()">Logout</a>
-      </li>
-    </ul>
-  </div>
-
-  <!-- Main Content -->
-  <div class="main-content flex-grow-1 p-4">
-
-    <h2 class="mb-4">Organization Security Overview</h2>
-
-    <!-- KPI Row -->
-    <div class="row g-4 mb-4">
-      <div class="col-md-2">
-        <div class="card text-center">
-          <div class="card-body">
-            <h6>Total Users</h6>
-            <h3 id="totalUsers">--</h3>
+        <div class="col-md-3">
+          <div class="card text-center">
+            <div class="card-body">
+              <h6>Org Awareness Score</h6>
+              <h3 class="text-primary">--</h3>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="col-md-2">
-        <div class="card text-center">
-          <div class="card-body">
-            <h6>Compliant Users</h6>
-            <h3 class="text-success">--</h3>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-2">
-        <div class="card text-center">
-          <div class="card-body">
-            <h6>Pending Training</h6>
-            <h3 class="text-warning">--</h3>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-3">
-        <div class="card text-center">
-          <div class="card-body">
-            <h6>Failed Last Phishing Simulation</h6>
-            <h3 class="text-danger">--</h3>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-3">
-        <div class="card text-center">
-          <div class="card-body">
-            <h6>Org Awareness Score</h6>
-            <h3 class="text-primary">--</h3>
-          </div>
-        </div>
-      </div>
     </div>
-
   </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/js/coreui.bundle.min.js"></script>
-<script src="/assets/js/layout.js"></script>
+  <!-- CoreUI JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/js/coreui.bundle.min.js"></script>
+  <script src="/assets/js/layout.js"></script>
 
 </body>
 </html>
