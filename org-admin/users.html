@@ -4,147 +4,158 @@
   <meta charset="UTF-8">
   <title>Organization Users</title>
 
+  <!-- CoreUI CSS -->
   <link href="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/css/coreui.min.css" rel="stylesheet">
   <link href="/assets/css/custom.css" rel="stylesheet">
 </head>
 
-<body>
+<body class="body">
+  <div class="d-flex">
 
-<div class="wrapper d-flex">
-
-  <!-- Sidebar -->
-  <div class="sidebar sidebar-dark sidebar-fixed">
-    <div class="sidebar-brand d-none d-md-flex">
-      <h4 class="text-white">CySec Guardians</h4>
-    </div>
-
-    <ul class="sidebar-nav d-flex flex-column h-100">
-      <li class="nav-item">
-        <a class="nav-link" href="/org-admin/index.html">Dashboard</a>
-      </li>
-
-      <li class="nav-item admin-only">
-        <a class="nav-link active" href="/org-admin/users.html">Users</a>
-      </li>
-
-      <li class="nav-item menu-training">
-        <a class="nav-link" href="/org-admin/trainings.html">Trainings</a>
-      </li>
-
-      <li class="nav-item menu-phishing">
-        <a class="nav-link" href="/org-admin/phishing.html">Phishing Simulation</a>
-      </li>
-
-      <li class="nav-item mt-auto">
-        <a class="nav-link text-danger" href="#" onclick="logout()">Logout</a>
-      </li>
-    </ul>
-  </div>
-
-  <!-- Main Content -->
-  <div class="main-content flex-grow-1 p-4">
-
-    <h2 class="mb-3">Organization Users</h2>
-
-    <button class="btn btn-primary mb-3" data-coreui-toggle="modal" data-coreui-target="#addUserModal">
-      Add User
-    </button>
-
-    <div class="card">
-      <div class="card-body table-responsive">
-        <table class="table table-bordered table-hover">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Department</th>
-            </tr>
-          </thead>
-          <tbody id="usersTable"></tbody>
-        </table>
+    <!-- Sidebar -->
+    <div class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
+      <div class="sidebar-brand d-none d-md-flex">
+        <h4 class="text-white">CySec Guardians</h4>
       </div>
+
+      <ul class="sidebar-nav d-flex flex-column h-100">
+        <li class="nav-item">
+          <a class="nav-link" href="/org-admin/index.html">Dashboard</a>
+        </li>
+
+        <li class="nav-item admin-only">
+          <a class="nav-link active" href="/org-admin/users.html">Users</a>
+        </li>
+
+        <li class="nav-item menu-training">
+          <a class="nav-link" href="/org-admin/trainings.html">Trainings</a>
+        </li>
+
+        <li class="nav-item menu-phishing">
+          <a class="nav-link" href="/org-admin/phishing.html">Phishing Simulation</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="/org-admin/reports.html">Reports</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="/org-admin/settings.html">Settings</a>
+        </li>
+
+        <li class="nav-item mt-auto">
+          <a class="nav-link text-danger" href="#" onclick="logout()">Logout</a>
+        </li>
+      </ul>
     </div>
 
-  </div>
-</div>
+    <!-- Main Content -->
+    <div class="container-fluid p-4">
 
-<!-- Add User Modal -->
-<div class="modal fade" id="addUserModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Organization Users</h2>
+        <button class="btn btn-primary" onclick="openModal()">Add User</button>
+      </div>
+
+      <div class="card">
+        <div class="card-body table-responsive">
+          <table class="table table-bordered table-hover">
+            <thead class="table-light">
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Department</th>
+              </tr>
+            </thead>
+            <tbody id="usersTable">
+              <tr>
+                <td colspan="3" class="text-center">Loading users...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Add User Modal -->
+  <div class="modal fade" id="addUserModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content p-3">
         <h5>Add Employee</h5>
-      </div>
-      <div class="modal-body">
         <input type="text" id="name" class="form-control mb-2" placeholder="Name">
         <input type="email" id="email" class="form-control mb-2" placeholder="Email">
-        <input type="text" id="dept" class="form-control" placeholder="Department">
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-primary" onclick="addUser()">Add</button>
+        <input type="text" id="dept" class="form-control mb-3" placeholder="Department">
+        <button class="btn btn-success" onclick="addUser()">Add</button>
       </div>
     </div>
   </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/js/coreui.bundle.min.js"></script>
-<script src="/assets/js/layout.js"></script>
+  <!-- CoreUI JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/js/coreui.bundle.min.js"></script>
+  <script src="/assets/js/layout.js"></script>
 
-<script>
-async function loadUsers() {
-  const token = localStorage.getItem("auth_token");
+  <script>
+    function openModal() {
+      const modal = new coreui.Modal(document.getElementById('addUserModal'));
+      modal.show();
+    }
 
-  const meRes = await fetch("https://cysec-backend.onrender.com/me", {
-    headers: { "Authorization": "Bearer " + token }
-  });
-  const me = await meRes.json();
+    async function loadUsers() {
+      const token = localStorage.getItem("auth_token");
 
-  const res = await fetch(`https://cysec-backend.onrender.com/employees?org_id=${me.org_id}`, {
-    headers: { "Authorization": "Bearer " + token }
-  });
+      const meRes = await fetch("https://cysec-backend.onrender.com/me", {
+        headers: { "Authorization": "Bearer " + token }
+      });
+      const me = await meRes.json();
 
-  const users = await res.json();
-  const table = document.getElementById("usersTable");
-  table.innerHTML = "";
+      const res = await fetch(`https://cysec-backend.onrender.com/employees?org_id=${me.org_id}`, {
+        headers: { "Authorization": "Bearer " + token }
+      });
 
-  users.forEach(u => {
-    table.innerHTML += `
-      <tr>
-        <td>${u.name}</td>
-        <td>${u.email}</td>
-        <td>${u.department || ""}</td>
-      </tr>
-    `;
-  });
-}
+      const users = await res.json();
+      const table = document.getElementById("usersTable");
+      table.innerHTML = "";
 
-async function addUser() {
-  const token = localStorage.getItem("auth_token");
+      users.forEach(u => {
+        table.innerHTML += `
+          <tr>
+            <td>${u.name}</td>
+            <td>${u.email}</td>
+            <td>${u.department || ""}</td>
+          </tr>
+        `;
+      });
+    }
 
-  const meRes = await fetch("https://cysec-backend.onrender.com/me", {
-    headers: { "Authorization": "Bearer " + token }
-  });
-  const me = await meRes.json();
+    async function addUser() {
+      const token = localStorage.getItem("auth_token");
 
-  await fetch("https://cysec-backend.onrender.com/employees", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer " + token
-    },
-    body: JSON.stringify({
-      org_id: me.org_id,
-      name: document.getElementById("name").value,
-      email: document.getElementById("email").value,
-      department: document.getElementById("dept").value
-    })
-  });
+      const meRes = await fetch("https://cysec-backend.onrender.com/me", {
+        headers: { "Authorization": "Bearer " + token }
+      });
+      const me = await meRes.json();
 
-  location.reload();
-}
+      await fetch("https://cysec-backend.onrender.com/employees", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({
+          org_id: me.org_id,
+          name: document.getElementById("name").value,
+          email: document.getElementById("email").value,
+          department: document.getElementById("dept").value
+        })
+      });
 
-loadUsers();
-</script>
+      location.reload();
+    }
+
+    loadUsers();
+  </script>
 
 </body>
 </html>
