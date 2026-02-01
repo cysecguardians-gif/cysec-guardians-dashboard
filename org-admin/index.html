@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Org Admin Dashboard</title>
 
   <!-- CoreUI CSS -->
@@ -9,8 +10,8 @@
   <link href="/assets/css/custom.css" rel="stylesheet">
 </head>
 
-<body class="body">
-  <div class="d-flex">
+<body>
+  <div class="wrapper">
 
     <!-- Sidebar -->
     <div class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
@@ -23,15 +24,15 @@
           <a class="nav-link active" href="/org-admin/index.html">Dashboard</a>
         </li>
 
-        <li class="nav-item admin-only">
+        <li class="nav-item">
           <a class="nav-link" href="/org-admin/users.html">Users</a>
         </li>
 
-        <li class="nav-item menu-training">
+        <li class="nav-item" id="menu-training">
           <a class="nav-link" href="/org-admin/trainings.html">Trainings</a>
         </li>
 
-        <li class="nav-item menu-phishing">
+        <li class="nav-item" id="menu-phishing">
           <a class="nav-link" href="/org-admin/phishing.html">Phishing Simulation</a>
         </li>
 
@@ -49,65 +50,74 @@
       </ul>
     </div>
 
-    <!-- Main Content -->
-    <div class="container-fluid p-4">
+    <!-- Main Wrapper -->
+    <div class="wrapper d-flex flex-column min-vh-100 bg-light">
 
-      <h2 class="mb-4">Organization Security Overview</h2>
+      <!-- Header (can be used later) -->
+      <header class="header header-sticky"></header>
 
-      <!-- KPI Row -->
-      <div class="row g-4 mb-4">
-        <div class="col-md-2">
-          <div class="card text-center">
-            <div class="card-body">
-              <h6>Total Users</h6>
-              <h3>--</h3>
+      <!-- Body -->
+      <div class="body flex-grow-1 px-3">
+        <div class="container-lg">
+
+          <h2 class="mb-4">Organization Security Overview</h2>
+
+          <!-- KPI Row -->
+          <div class="row g-4 mb-4">
+            <div class="col-md-2">
+              <div class="card text-center">
+                <div class="card-body">
+                  <h6>Total Users</h6>
+                  <h3>--</h3>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-2">
+              <div class="card text-center">
+                <div class="card-body">
+                  <h6>Compliant Users</h6>
+                  <h3 class="text-success">--</h3>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-2">
+              <div class="card text-center">
+                <div class="card-body">
+                  <h6>Pending Training</h6>
+                  <h3 class="text-warning">--</h3>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <div class="card text-center">
+                <div class="card-body">
+                  <h6>Failed Last Phishing Simulation</h6>
+                  <h3 class="text-danger">--</h3>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <div class="card text-center">
+                <div class="card-body">
+                  <h6>Org Awareness Score</h6>
+                  <h3 class="text-primary">--</h3>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="col-md-2">
-          <div class="card text-center">
-            <div class="card-body">
-              <h6>Compliant Users</h6>
-              <h3 class="text-success">--</h3>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-2">
-          <div class="card text-center">
-            <div class="card-body">
-              <h6>Pending Training</h6>
-              <h3 class="text-warning">--</h3>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-3">
-          <div class="card text-center">
-            <div class="card-body">
-              <h6>Failed Last Phishing Simulation</h6>
-              <h3 class="text-danger">--</h3>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-3">
-          <div class="card text-center">
-            <div class="card-body">
-              <h6>Org Awareness Score</h6>
-              <h3 class="text-primary">--</h3>
-            </div>
-          </div>
         </div>
       </div>
-
     </div>
+
   </div>
 
   <!-- CoreUI JS -->
   <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/js/coreui.bundle.min.js"></script>
   <script src="/assets/js/layout.js"></script>
-
 </body>
 </html>
