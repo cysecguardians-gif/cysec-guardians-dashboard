@@ -4,98 +4,107 @@
   <meta charset="UTF-8">
   <title>Phishing Simulation</title>
 
+  <!-- CoreUI CSS -->
   <link href="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/css/coreui.min.css" rel="stylesheet">
   <link href="/assets/css/custom.css" rel="stylesheet">
 </head>
 
-<body>
+<body class="body">
+  <div class="d-flex">
 
-<div class="wrapper d-flex">
-
-  <!-- Sidebar -->
-  <div class="sidebar sidebar-dark sidebar-fixed">
-    <div class="sidebar-brand d-none d-md-flex">
-      <h4 class="text-white">CySec Guardians</h4>
-    </div>
-
-    <ul class="sidebar-nav d-flex flex-column h-100">
-      <li class="nav-item">
-        <a class="nav-link" href="/org-admin/index.html">Dashboard</a>
-      </li>
-
-      <li class="nav-item admin-only">
-        <a class="nav-link" href="/org-admin/users.html">Users</a>
-      </li>
-
-      <li class="nav-item menu-training">
-        <a class="nav-link" href="/org-admin/trainings.html">Trainings</a>
-      </li>
-
-      <li class="nav-item menu-phishing">
-        <a class="nav-link active" href="/org-admin/phishing.html">Phishing Simulation</a>
-      </li>
-
-      <li class="nav-item mt-auto">
-        <a class="nav-link text-danger" href="#" onclick="logout()">Logout</a>
-      </li>
-    </ul>
-  </div>
-
-  <!-- Main Content -->
-  <div class="main-content flex-grow-1 p-4">
-
-    <h2 class="mb-4">Phishing Simulation Control Center</h2>
-
-    <button class="btn btn-primary mb-3" onclick="loadCampaigns()">
-      Refresh Campaigns
-    </button>
-
-    <div class="card">
-      <div class="card-body table-responsive">
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>Campaign Name</th>
-              <th>Status</th>
-              <th>Created Date</th>
-            </tr>
-          </thead>
-          <tbody id="campaignTable"></tbody>
-        </table>
+    <!-- Sidebar -->
+    <div class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
+      <div class="sidebar-brand d-none d-md-flex">
+        <h4 class="text-white">CySec Guardians</h4>
       </div>
+
+      <ul class="sidebar-nav d-flex flex-column h-100">
+        <li class="nav-item">
+          <a class="nav-link" href="/org-admin/index.html">Dashboard</a>
+        </li>
+
+        <li class="nav-item admin-only">
+          <a class="nav-link" href="/org-admin/users.html">Users</a>
+        </li>
+
+        <li class="nav-item menu-training">
+          <a class="nav-link" href="/org-admin/trainings.html">Trainings</a>
+        </li>
+
+        <li class="nav-item menu-phishing">
+          <a class="nav-link active" href="/org-admin/phishing.html">Phishing Simulation</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="/org-admin/reports.html">Reports</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="/org-admin/settings.html">Settings</a>
+        </li>
+
+        <li class="nav-item mt-auto">
+          <a class="nav-link text-danger" href="#" onclick="logout()">Logout</a>
+        </li>
+      </ul>
     </div>
 
+    <!-- Main Content -->
+    <div class="container-fluid p-4">
+
+      <h2 class="mb-4">Phishing Simulation Control Center</h2>
+
+      <div class="card">
+        <div class="card-body table-responsive">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Campaign Name</th>
+                <th>Status</th>
+                <th>Launch Date</th>
+              </tr>
+            </thead>
+            <tbody id="campaignTable">
+              <tr>
+                <td colspan="3" class="text-center">Loading campaigns...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
   </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/js/coreui.bundle.min.js"></script>
-<script src="/assets/js/layout.js"></script>
+  <!-- CoreUI JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/js/coreui.bundle.min.js"></script>
+  <script src="/assets/js/layout.js"></script>
 
-<script>
-async function loadCampaigns() {
-  const token = localStorage.getItem("auth_token");
+  <script>
+    async function loadCampaigns() {
+      const token = localStorage.getItem("auth_token");
 
-  const res = await fetch("https://cysec-backend.onrender.com/phishing/campaigns", {
-    headers: { "Authorization": "Bearer " + token }
-  });
+      const res = await fetch("https://cysec-backend.onrender.com/phishing/campaigns", {
+        headers: { "Authorization": "Bearer " + token }
+      });
 
-  const campaigns = await res.json();
-  const table = document.getElementById("campaignTable");
-  table.innerHTML = "";
+      const data = await res.json();
+      const table = document.getElementById("campaignTable");
+      table.innerHTML = "";
 
-  campaigns.forEach(c => {
-    table.innerHTML += `
-      <tr>
-        <td>${c.name}</td>
-        <td>${c.status}</td>
-        <td>${c.created_date || ""}</td>
-      </tr>
-    `;
-  });
-}
+      data.forEach(c => {
+        table.innerHTML += `
+          <tr>
+            <td>${c.name}</td>
+            <td>${c.status}</td>
+            <td>${c.launch_date || ""}</td>
+          </tr>
+        `;
+      });
+    }
 
-loadCampaigns();
-</script>
+    loadCampaigns();
+  </script>
 
 </body>
 </html>
