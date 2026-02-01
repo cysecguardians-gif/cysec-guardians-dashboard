@@ -1,29 +1,27 @@
 async function initLayout() {
-  if (!localStorage.getItem("auth_token")) {
+  const token = localStorage.getItem("auth_token");
+
+  if (!token) {
     window.location.href = "/login.html";
     return;
   }
 
   const res = await fetch("https://cysec-backend.onrender.com/me", {
-    headers: {
-      "Authorization": "Bearer " + localStorage.getItem("auth_token")
-    }
+    headers: { "Authorization": "Bearer " + token }
   });
 
   const me = await res.json();
 
-  // Hide features based on flags
   if (!me.training_enabled) {
-    document.querySelectorAll(".menu-training").forEach(el => el.style.display = "none");
+    document.querySelectorAll(".menu-training").forEach(e => e.style.display = "none");
   }
 
   if (!me.phishing_enabled) {
-    document.querySelectorAll(".menu-phishing").forEach(el => el.style.display = "none");
+    document.querySelectorAll(".menu-phishing").forEach(e => e.style.display = "none");
   }
 
-  // Hide admin menus for users
   if (me.role !== "admin") {
-    document.querySelectorAll(".admin-only").forEach(el => el.style.display = "none");
+    document.querySelectorAll(".admin-only").forEach(e => e.style.display = "none");
   }
 }
 
