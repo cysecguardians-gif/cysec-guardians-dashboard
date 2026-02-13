@@ -21,12 +21,31 @@
     </div>
 
     <ul class="sidebar-nav d-flex flex-column h-100">
-      <li class="nav-item"><a class="nav-link" href="/org-admin/index.html">Dashboard</a></li>
-      <li class="nav-item"><a class="nav-link" href="/org-admin/users.html">Users</a></li>
-      <li class="nav-item"><a class="nav-link" href="/org-admin/trainings.html">Trainings</a></li>
-      <li class="nav-item"><a class="nav-link" href="/org-admin/phishing.html">Phishing Simulation</a></li>
-      <li class="nav-item"><a class="nav-link" href="/org-admin/reports.html">Reports</a></li>
-      <li class="nav-item"><a class="nav-link active" href="/org-admin/settings.html">Settings</a></li>
+      <li class="nav-item">
+        <a class="nav-link" href="/org-admin/index.html">Dashboard</a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="/org-admin/users.html">Users</a>
+      </li>
+
+      <!-- REQUIRED for layout.js -->
+      <li class="nav-item" id="menu-training">
+        <a class="nav-link" href="/org-admin/trainings.html">Trainings</a>
+      </li>
+
+      <!-- REQUIRED for layout.js -->
+      <li class="nav-item" id="menu-phishing">
+        <a class="nav-link" href="/org-admin/phishing.html">Phishing Simulation</a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="/org-admin/reports.html">Reports</a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link active" href="/org-admin/settings.html">Settings</a>
+      </li>
 
       <li class="nav-item mt-auto">
         <a class="nav-link text-danger" href="#" onclick="logout()">Logout</a>
@@ -37,14 +56,12 @@
   <!-- Main Content -->
   <div class="d-flex flex-column min-vh-100 bg-light">
 
-    <!-- Header -->
     <header class="header header-sticky px-3">
       <div class="container-fluid">
         <h5 class="mb-0">Organization Settings</h5>
       </div>
     </header>
 
-    <!-- Page Body -->
     <main class="body flex-grow-1 px-3">
       <div class="container-lg">
 
@@ -62,27 +79,17 @@
 
             <div class="mb-3">
               <label class="form-label">Organization Name</label>
-              <input
-                id="orgName"
-                type="text"
-                class="form-control"
-                placeholder="Loading..."
-              >
+              <input id="orgName" type="text" class="form-control" placeholder="Loading...">
             </div>
 
             <div class="mb-3">
               <label class="form-label">Admin Email</label>
-              <input
-                id="adminEmail"
-                type="email"
-                class="form-control"
-                placeholder="Loading..."
-              >
+              <input id="adminEmail" type="email" class="form-control" placeholder="Loading...">
             </div>
           </div>
         </div>
 
-        <!-- Notification Preferences -->
+        <!-- Notification -->
         <div class="card mb-4">
           <div class="card-body">
             <h5>Notification Preferences</h5>
@@ -115,77 +122,18 @@
 
       </div>
     </main>
+
   </div>
 </div>
 
-<!-- CoreUI JS -->
+<!-- CoreUI -->
 <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/js/coreui.bundle.min.js"></script>
 
-<!-- Layout -->
+<!-- Global Layout -->
 <script src="/assets/js/layout.js"></script>
 
-<!-- Settings logic -->
-<script type="module">
-
-import { apiFetch } from "/assets/js/api.js";
-
-/* ===============================
-   Load Settings
-=============================== */
-
-async function loadSettings() {
-  try {
-    // Example endpoint (adjust later)
-    const data = await apiFetch("/org/settings");
-
-    document.getElementById("orgName").value =
-      data.org_name || "";
-
-    document.getElementById("adminEmail").value =
-      data.admin_email || "";
-
-    document.getElementById("notifyPhishing").checked =
-      !!data.notify_phishing;
-
-    document.getElementById("notifyTraining").checked =
-      !!data.notify_training;
-
-  } catch (err) {
-    console.error("Failed to load settings", err);
-  }
-}
-
-/* ===============================
-   Save Settings
-=============================== */
-
-async function saveSettings() {
-  try {
-    await apiFetch("/org/settings", {
-      method: "PUT",
-      body: JSON.stringify({
-        org_name: document.getElementById("orgName").value,
-        admin_email: document.getElementById("adminEmail").value,
-        notify_phishing: document.getElementById("notifyPhishing").checked,
-        notify_training: document.getElementById("notifyTraining").checked
-      })
-    });
-
-    alert("Settings updated successfully");
-
-  } catch (err) {
-    console.error("Save failed", err);
-    alert("Failed to save settings");
-  }
-}
-
-document
-  .getElementById("saveSettingsBtn")
-  .addEventListener("click", saveSettings);
-
-loadSettings();
-
-</script>
+<!-- PAGE CONTROLLER -->
+<script type="module" src="/assets/js/pages/settings.js"></script>
 
 </body>
 </html>
