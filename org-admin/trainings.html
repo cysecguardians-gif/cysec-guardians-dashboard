@@ -1,167 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Manage Trainings</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Manage Trainings</title>
 
-  <!-- CoreUI CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/css/coreui.min.css" rel="stylesheet">
-  <link href="/assets/css/custom.css" rel="stylesheet">
+<!-- CoreUI CSS -->
+<link href="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/css/coreui.min.css" rel="stylesheet">
+<link href="/assets/css/custom.css" rel="stylesheet">
 </head>
 
 <body>
-  <div class="wrapper">
 
-    <!-- Sidebar -->
-    <div class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
-      <div class="sidebar-brand d-none d-md-flex">
-        <h4 class="text-white">CySec Guardians</h4>
-      </div>
+<div class="wrapper">
 
-      <ul class="sidebar-nav d-flex flex-column h-100">
-        <li class="nav-item">
-          <a class="nav-link" href="/org-admin/index.html">Dashboard</a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link" href="/org-admin/users.html">Users</a>
-        </li>
-
-        <li class="nav-item" id="menu-training">
-          <a class="nav-link active" href="/org-admin/trainings.html">Trainings</a>
-        </li>
-
-        <li class="nav-item" id="menu-phishing">
-          <a class="nav-link" href="/org-admin/phishing.html">Phishing Simulation</a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link" href="/org-admin/reports.html">Reports</a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link" href="/org-admin/settings.html">Settings</a>
-        </li>
-
-        <li class="nav-item mt-auto">
-          <a class="nav-link text-danger" href="#" onclick="logout()">Logout</a>
-        </li>
-      </ul>
+  <!-- Sidebar -->
+  <div class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
+    <div class="sidebar-brand d-none d-md-flex">
+      <h4 class="text-white mb-0">CySec Guardians</h4>
     </div>
 
-    <!-- Main Wrapper -->
-    <div class="wrapper d-flex flex-column min-vh-100 bg-light">
+    <ul class="sidebar-nav d-flex flex-column h-100">
+      <li class="nav-item"><a class="nav-link" href="/org-admin/index.html">Dashboard</a></li>
+      <li class="nav-item"><a class="nav-link" href="/org-admin/users.html">Users</a></li>
+      <li class="nav-item"><a class="nav-link active" href="/org-admin/trainings.html">Trainings</a></li>
+      <li class="nav-item"><a class="nav-link" href="/org-admin/phishing.html">Phishing Simulation</a></li>
+      <li class="nav-item"><a class="nav-link" href="/org-admin/reports.html">Reports</a></li>
+      <li class="nav-item"><a class="nav-link" href="/org-admin/settings.html">Settings</a></li>
 
-      <header class="header header-sticky"></header>
+      <li class="nav-item mt-auto">
+        <a class="nav-link text-danger" href="#" onclick="logout()">Logout</a>
+      </li>
+    </ul>
+  </div>
 
-      <div class="body flex-grow-1 px-3">
-        <div class="container-lg">
+  <!-- Main Content -->
+  <div class="d-flex flex-column min-vh-100 bg-light">
 
-          <h2 class="mb-4">Training Management</h2>
+    <!-- Header -->
+    <header class="header header-sticky px-3">
+      <div class="container-fluid">
+        <h5 class="mb-0">Training Management</h5>
+      </div>
+    </header>
 
-          <!-- Tabs -->
-          <ul class="nav nav-tabs" role="tablist">
-            <li class="nav-item">
-              <button class="nav-link active" data-coreui-toggle="tab" data-coreui-target="#assigned" type="button">
-                Assigned Trainings
-              </button>
-            </li>
-            <li class="nav-item">
-              <button class="nav-link" data-coreui-toggle="tab" data-coreui-target="#catalog" type="button">
-                Training Catalog
-              </button>
-            </li>
-          </ul>
+    <!-- Page Body -->
+    <main class="body flex-grow-1 px-3">
+      <div class="container-lg">
 
-          <div class="tab-content mt-4">
+        <div class="d-flex justify-content-between align-items-center my-4">
+          <h2 class="mb-0">Training Management</h2>
+          <button class="btn btn-primary" id="assignTrainingBtn">
+            Assign Training
+          </button>
+        </div>
 
-            <!-- Assigned Trainings -->
-            <div class="tab-pane fade show active" id="assigned">
-              <div class="card">
-                <div class="card-body table-responsive">
-                  <table class="table table-bordered">
-                    <thead class="table-light">
-                      <tr>
-                        <th>Training Name</th>
-                        <th>Users Assigned</th>
-                        <th>Completion %</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Phishing Awareness Program</td>
-                        <td>120</td>
-                        <td>68%</td>
-                        <td><button class="btn btn-sm btn-warning">Reassign</button></td>
-                      </tr>
-                      <tr>
-                        <td>Data Protection & Compliance</td>
-                        <td>95</td>
-                        <td>74%</td>
-                        <td><button class="btn btn-sm btn-warning">Reassign</button></td>
-                      </tr>
-                      <tr>
-                        <td>Password Hygiene Masterclass</td>
-                        <td>80</td>
-                        <td>81%</td>
-                        <td><button class="btn btn-sm btn-warning">Reassign</button></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+        <!-- Tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+          <li class="nav-item">
+            <button
+              class="nav-link active"
+              data-coreui-toggle="tab"
+              data-coreui-target="#assigned"
+              type="button">
+              Assigned Trainings
+            </button>
+          </li>
+
+          <li class="nav-item">
+            <button
+              class="nav-link"
+              data-coreui-toggle="tab"
+              data-coreui-target="#catalog"
+              type="button">
+              Training Catalog
+            </button>
+          </li>
+        </ul>
+
+        <div class="tab-content mt-4">
+
+          <!-- Assigned Trainings -->
+          <div class="tab-pane fade show active" id="assigned">
+            <div class="card">
+              <div class="card-body table-responsive">
+
+                <table class="table table-bordered table-hover align-middle">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Training Name</th>
+                      <th>Users Assigned</th>
+                      <th>Completion %</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+
+                  <tbody id="assignedTrainingTable">
+                    <tr>
+                      <td colspan="4" class="text-center">
+                        Loading assigned trainings...
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
               </div>
             </div>
+          </div>
 
-            <!-- Training Catalog -->
-            <div class="tab-pane fade" id="catalog">
-              <div class="card">
-                <div class="card-body table-responsive">
-                  <table class="table table-bordered">
-                    <thead class="table-light">
-                      <tr>
-                        <th>Training Name</th>
-                        <th>Category</th>
-                        <th>Difficulty</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Email Security Essentials</td>
-                        <td>Security Awareness</td>
-                        <td>Beginner</td>
-                        <td><button class="btn btn-sm btn-primary">Assign to Users</button></td>
-                      </tr>
-                      <tr>
-                        <td>Secure Remote Working</td>
-                        <td>Compliance</td>
-                        <td>Intermediate</td>
-                        <td><button class="btn btn-sm btn-primary">Assign to Users</button></td>
-                      </tr>
-                      <tr>
-                        <td>Social Engineering Defense</td>
-                        <td>Security Awareness</td>
-                        <td>Advanced</td>
-                        <td><button class="btn btn-sm btn-primary">Assign to Users</button></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+          <!-- Training Catalog -->
+          <div class="tab-pane fade" id="catalog">
+            <div class="card">
+              <div class="card-body table-responsive">
+
+                <table class="table table-bordered table-hover align-middle">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Training Name</th>
+                      <th>Category</th>
+                      <th>Difficulty</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+
+                  <tbody id="trainingCatalogTable">
+                    <tr>
+                      <td colspan="4" class="text-center">
+                        Loading training catalog...
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
               </div>
             </div>
-
           </div>
 
         </div>
-      </div>
-    </div>
 
+      </div>
+    </main>
   </div>
 
-  <script src="/assets/js/api.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/js/coreui.bundle.min.js"></script>
-  <script src="/assets/js/layout.js"></script>
+</div>
+
+<!-- CoreUI JS -->
+<script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/js/coreui.bundle.min.js"></script>
+
+<!-- Layout -->
+<script src="/assets/js/layout.js"></script>
+
+<!-- Trainings JS (we build next) -->
+<script src="/assets/js/trainings.js"></script>
+
 </body>
 </html>
