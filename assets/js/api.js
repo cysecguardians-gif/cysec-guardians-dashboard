@@ -1,31 +1,41 @@
+// api.js
+
 const API_BASE = "https://cysec-backend.onrender.com";
 
-// Helper to get token later (for now can be empty)
-function getAuthHeaders() {
-  const token = localStorage.getItem("auth_token"); // we’ll use this later
+/* ===============================
+   Headers
+=============================== */
+
+function getHeaders() {
+  const token = localStorage.getItem("auth_token");
+
   return {
     "Content-Type": "application/json",
-    ...(token && { "Authorization": `Bearer ${token}` })
+    ...(token && { Authorization: `Bearer ${token}` })
   };
 }
 
-// Generic GET
-async function apiGet(path) {
+/* ===============================
+   Universal API Function
+=============================== */
+
+export async function apiFetch(path, options = {}) {
   const res = await fetch(`${API_BASE}${path}`, {
-    method: "GET",
-    headers: getAuthHeaders()
+    headers: getHeaders(),
+    ...options
   });
 
-  return res.json();
-}
+  // Auto logout if unauthorized
+  if (res.status === 401) {
+    localStorage.clear();
+    window.location.href = "/login.html";
+    throw new Error("Unauthorized");
+  }
 
-// Generic POST
-async function apiPost(path, body) {
-  const res = await fetch(`${API_BASE}${path}`, {
-    method: "POST",
-    headers: getAuthHeaders(),
-    body: JSON.stringify(body)
-  });
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(errText || "API request failed");
+  }
 
   return res.json();
 }
