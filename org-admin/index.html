@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Org Admin Dashboard</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Org Admin Dashboard</title>
 
-  <!-- CoreUI CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/css/coreui.min.css" rel="stylesheet">
-  <link href="/assets/css/custom.css" rel="stylesheet">
+<!-- CoreUI CSS -->
+<link href="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/css/coreui.min.css" rel="stylesheet">
+<link href="/assets/css/custom.css" rel="stylesheet">
 </head>
 
 <body>
@@ -54,14 +54,12 @@
   <!-- Main Content -->
   <div class="d-flex flex-column min-vh-100 bg-light">
 
-    <!-- Header -->
     <header class="header header-sticky px-3">
       <div class="container-fluid">
         <h5 class="mb-0">Organization Dashboard</h5>
       </div>
     </header>
 
-    <!-- Main Body -->
     <main class="body flex-grow-1 px-3">
       <div class="container-lg">
 
@@ -117,7 +115,7 @@
 
         </div>
 
-        <!-- Charts placeholder (next step) -->
+        <!-- Charts -->
         <div class="row g-4">
           <div class="col-lg-6">
             <div class="card">
@@ -144,14 +142,17 @@
   </div>
 </div>
 
-<!-- CoreUI JS -->
+<!-- CoreUI -->
 <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/js/coreui.bundle.min.js"></script>
 
-<!-- Layout + Sidebar -->
+<!-- Chart.js (required for dashboard.js) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Global Layout -->
 <script src="/assets/js/layout.js"></script>
 
-<!-- Dashboard Logic -->
-<script src="/assets/js/pages/dashboard.js></script>
+<!-- PAGE CONTROLLER -->
+<script type="module" src="/assets/js/pages/dashboard.js"></script>
 
 </body>
 </html>
