@@ -21,12 +21,31 @@
     </div>
 
     <ul class="sidebar-nav d-flex flex-column h-100">
-      <li class="nav-item"><a class="nav-link" href="/org-admin/index.html">Dashboard</a></li>
-      <li class="nav-item"><a class="nav-link" href="/org-admin/users.html">Users</a></li>
-      <li class="nav-item"><a class="nav-link" href="/org-admin/trainings.html">Trainings</a></li>
-      <li class="nav-item"><a class="nav-link active" href="/org-admin/phishing.html">Phishing Simulation</a></li>
-      <li class="nav-item"><a class="nav-link" href="/org-admin/reports.html">Reports</a></li>
-      <li class="nav-item"><a class="nav-link" href="/org-admin/settings.html">Settings</a></li>
+      <li class="nav-item">
+        <a class="nav-link" href="/org-admin/index.html">Dashboard</a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="/org-admin/users.html">Users</a>
+      </li>
+
+      <!-- REQUIRED by layout.js -->
+      <li class="nav-item" id="menu-training">
+        <a class="nav-link" href="/org-admin/trainings.html">Trainings</a>
+      </li>
+
+      <!-- REQUIRED by layout.js -->
+      <li class="nav-item" id="menu-phishing">
+        <a class="nav-link active" href="/org-admin/phishing.html">Phishing Simulation</a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="/org-admin/reports.html">Reports</a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="/org-admin/settings.html">Settings</a>
+      </li>
 
       <li class="nav-item mt-auto">
         <a class="nav-link text-danger" href="#" onclick="logout()">Logout</a>
@@ -37,14 +56,12 @@
   <!-- Main Content -->
   <div class="d-flex flex-column min-vh-100 bg-light">
 
-    <!-- Header -->
     <header class="header header-sticky px-3">
       <div class="container-fluid">
         <h5 class="mb-0">Phishing Simulation</h5>
       </div>
     </header>
 
-    <!-- Body -->
     <main class="body flex-grow-1 px-3">
       <div class="container-lg">
 
@@ -55,7 +72,7 @@
           </button>
         </div>
 
-        <!-- QUICK ACTIONS -->
+        <!-- Quick Actions -->
         <div class="row g-4 mb-4">
 
           <div class="col-md-4">
@@ -102,7 +119,7 @@
 
         </div>
 
-        <!-- CAMPAIGN TABLE -->
+        <!-- Campaign Table -->
         <div class="card">
           <div class="card-body table-responsive">
 
@@ -139,11 +156,11 @@
 <!-- CoreUI -->
 <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/js/coreui.bundle.min.js"></script>
 
-<!-- Layout -->
+<!-- Global Layout -->
 <script src="/assets/js/layout.js"></script>
 
-<!-- Phishing JS (we build later) -->
-<script src="/assets/js/pages/phishing.js"></script>
+<!-- PAGE CONTROLLER -->
+<script type="module" src="/assets/js/pages/phishing.js"></script>
 
 </body>
 </html>
