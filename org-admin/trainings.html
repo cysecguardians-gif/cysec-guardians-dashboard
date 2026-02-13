@@ -21,12 +21,31 @@
     </div>
 
     <ul class="sidebar-nav d-flex flex-column h-100">
-      <li class="nav-item"><a class="nav-link" href="/org-admin/index.html">Dashboard</a></li>
-      <li class="nav-item"><a class="nav-link" href="/org-admin/users.html">Users</a></li>
-      <li class="nav-item"><a class="nav-link active" href="/org-admin/trainings.html">Trainings</a></li>
-      <li class="nav-item"><a class="nav-link" href="/org-admin/phishing.html">Phishing Simulation</a></li>
-      <li class="nav-item"><a class="nav-link" href="/org-admin/reports.html">Reports</a></li>
-      <li class="nav-item"><a class="nav-link" href="/org-admin/settings.html">Settings</a></li>
+      <li class="nav-item">
+        <a class="nav-link" href="/org-admin/index.html">Dashboard</a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="/org-admin/users.html">Users</a>
+      </li>
+
+      <!-- IMPORTANT: menu-training id -->
+      <li class="nav-item" id="menu-training">
+        <a class="nav-link active" href="/org-admin/trainings.html">Trainings</a>
+      </li>
+
+      <!-- IMPORTANT: menu-phishing id -->
+      <li class="nav-item" id="menu-phishing">
+        <a class="nav-link" href="/org-admin/phishing.html">Phishing Simulation</a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="/org-admin/reports.html">Reports</a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="/org-admin/settings.html">Settings</a>
+      </li>
 
       <li class="nav-item mt-auto">
         <a class="nav-link text-danger" href="#" onclick="logout()">Logout</a>
@@ -44,7 +63,7 @@
       </div>
     </header>
 
-    <!-- Page Body -->
+    <!-- Body -->
     <main class="body flex-grow-1 px-3">
       <div class="container-lg">
 
@@ -80,7 +99,7 @@
 
         <div class="tab-content mt-4">
 
-          <!-- Assigned Trainings -->
+          <!-- Assigned -->
           <div class="tab-pane fade show active" id="assigned">
             <div class="card">
               <div class="card-body table-responsive">
@@ -108,7 +127,7 @@
             </div>
           </div>
 
-          <!-- Training Catalog -->
+          <!-- Catalog -->
           <div class="tab-pane fade" id="catalog">
             <div class="card">
               <div class="card-body table-responsive">
@@ -140,18 +159,18 @@
 
       </div>
     </main>
-  </div>
 
+  </div>
 </div>
 
-<!-- CoreUI JS -->
+<!-- CoreUI -->
 <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/js/coreui.bundle.min.js"></script>
 
-<!-- Layout -->
+<!-- Global Layout -->
 <script src="/assets/js/layout.js"></script>
 
-<!-- Trainings JS (we build next) -->
-<script src="/assets/js/pages/trainings.js"></script>
+<!-- PAGE CONTROLLER (IMPORTANT: module) -->
+<script type="module" src="/assets/js/pages/trainings.js"></script>
 
 </body>
 </html>
