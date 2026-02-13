@@ -1,108 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Reports</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Reports</title>
 
-  <!-- CoreUI CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/css/coreui.min.css" rel="stylesheet">
-  <link href="/assets/css/custom.css" rel="stylesheet">
+<!-- CoreUI CSS -->
+<link href="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/css/coreui.min.css" rel="stylesheet">
+<link href="/assets/css/custom.css" rel="stylesheet">
 </head>
 
 <body>
-  <div class="wrapper">
 
-    <!-- Sidebar -->
-    <div class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
-      <div class="sidebar-brand d-none d-md-flex">
-        <h4 class="text-white">CySec Guardians</h4>
-      </div>
+<div class="wrapper">
 
-      <ul class="sidebar-nav d-flex flex-column h-100">
-        <li class="nav-item">
-          <a class="nav-link" href="/org-admin/index.html">Dashboard</a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link" href="/org-admin/users.html">Users</a>
-        </li>
-
-        <li class="nav-item" id="menu-training">
-          <a class="nav-link" href="/org-admin/trainings.html">Trainings</a>
-        </li>
-
-        <li class="nav-item" id="menu-phishing">
-          <a class="nav-link" href="/org-admin/phishing.html">Phishing Simulation</a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link active" href="/org-admin/reports.html">Reports</a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link" href="/org-admin/settings.html">Settings</a>
-        </li>
-
-        <li class="nav-item mt-auto">
-          <a class="nav-link text-danger" href="#" onclick="logout()">Logout</a>
-        </li>
-      </ul>
+  <!-- Sidebar -->
+  <div class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
+    <div class="sidebar-brand d-none d-md-flex">
+      <h4 class="text-white mb-0">CySec Guardians</h4>
     </div>
 
-    <!-- Main Wrapper -->
-    <div class="wrapper d-flex flex-column min-vh-100 bg-light">
+    <ul class="sidebar-nav d-flex flex-column h-100">
+      <li class="nav-item"><a class="nav-link" href="/org-admin/index.html">Dashboard</a></li>
+      <li class="nav-item"><a class="nav-link" href="/org-admin/users.html">Users</a></li>
+      <li class="nav-item"><a class="nav-link" href="/org-admin/trainings.html">Trainings</a></li>
+      <li class="nav-item"><a class="nav-link" href="/org-admin/phishing.html">Phishing Simulation</a></li>
+      <li class="nav-item"><a class="nav-link active" href="/org-admin/reports.html">Reports</a></li>
+      <li class="nav-item"><a class="nav-link" href="/org-admin/settings.html">Settings</a></li>
 
-      <header class="header header-sticky"></header>
+      <li class="nav-item mt-auto">
+        <a class="nav-link text-danger" href="#" onclick="logout()">Logout</a>
+      </li>
+    </ul>
+  </div>
 
-      <div class="body flex-grow-1 px-3">
-        <div class="container-lg">
+  <!-- Main Content -->
+  <div class="d-flex flex-column min-vh-100 bg-light">
 
-          <h2 class="mb-4">Compliance & Training Reports</h2>
+    <!-- Header -->
+    <header class="header header-sticky px-3">
+      <div class="container-fluid">
+        <h5 class="mb-0">Reports</h5>
+      </div>
+    </header>
 
-          <div class="row g-4">
+    <!-- Body -->
+    <main class="body flex-grow-1 px-3">
+      <div class="container-lg">
 
-            <div class="col-md-4">
-              <div class="card text-center">
-                <div class="card-body">
-                  <h5>Training Completion Report</h5>
-                  <p>Download report of all users and their training status.</p>
-                  <button class="btn btn-primary">Download Report</button>
-                </div>
+        <h2 class="my-4">Compliance & Training Reports</h2>
+
+        <div class="row g-4">
+
+          <!-- Training Report -->
+          <div class="col-md-4">
+            <div class="card h-100 text-center">
+              <div class="card-body d-flex flex-column">
+                <h5>Training Completion Report</h5>
+                <p class="flex-grow-1">
+                  Download report of all users and their training status.
+                </p>
+                <button
+                  class="btn btn-primary mt-auto"
+                  id="downloadTrainingReport"
+                >
+                  Download Report
+                </button>
               </div>
             </div>
+          </div>
 
-            <div class="col-md-4">
-              <div class="card text-center">
-                <div class="card-body">
-                  <h5>Phishing Simulation Report</h5>
-                  <p>Detailed results of phishing campaigns and user behavior.</p>
-                  <button class="btn btn-primary">Download Report</button>
-                </div>
+          <!-- Phishing Report -->
+          <div class="col-md-4">
+            <div class="card h-100 text-center">
+              <div class="card-body d-flex flex-column">
+                <h5>Phishing Simulation Report</h5>
+                <p class="flex-grow-1">
+                  Detailed results of phishing campaigns and user behavior.
+                </p>
+                <button
+                  class="btn btn-primary mt-auto"
+                  id="downloadPhishingReport"
+                >
+                  Download Report
+                </button>
               </div>
             </div>
+          </div>
 
-            <div class="col-md-4">
-              <div class="card text-center">
-                <div class="card-body">
-                  <h5>Compliance Status Report</h5>
-                  <p>Overall organizational compliance and awareness metrics.</p>
-                  <button class="btn btn-primary">Download Report</button>
-                </div>
+          <!-- Compliance Report -->
+          <div class="col-md-4">
+            <div class="card h-100 text-center">
+              <div class="card-body d-flex flex-column">
+                <h5>Compliance Status Report</h5>
+                <p class="flex-grow-1">
+                  Overall organizational compliance and awareness metrics.
+                </p>
+                <button
+                  class="btn btn-primary mt-auto"
+                  id="downloadComplianceReport"
+                >
+                  Download Report
+                </button>
               </div>
             </div>
-
           </div>
 
         </div>
+
       </div>
-    </div>
+    </main>
 
   </div>
+</div>
 
-  <!-- CoreUI JS -->
-  <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/js/coreui.bundle.min.js"></script>
-  <script src="/assets/js/layout.js"></script>
+<!-- CoreUI JS -->
+<script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/js/coreui.bundle.min.js"></script>
+
+<!-- Layout -->
+<script src="/assets/js/layout.js"></script>
+
+<!-- Reports JS (we will build later) -->
+<script src="/assets/js/reports.js"></script>
 
 </body>
 </html>
