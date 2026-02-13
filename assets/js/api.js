@@ -1,4 +1,4 @@
-// api.js
+import { showLoader, hideLoader, showToast } from "./ui.js";
 
 const API_BASE = "https://cysec-backend.onrender.com";
 
@@ -16,26 +16,35 @@ function getHeaders() {
 }
 
 /* ===============================
-   Universal API Function
+   Universal API
 =============================== */
 
 export async function apiFetch(path, options = {}) {
-  const res = await fetch(`${API_BASE}${path}`, {
-    headers: getHeaders(),
-    ...options
-  });
+  try {
+    showLoader();
 
-  // Auto logout if unauthorized
-  if (res.status === 401) {
-    localStorage.clear();
-    window.location.href = "/login.html";
-    throw new Error("Unauthorized");
+    const res = await fetch(`${API_BASE}${path}`, {
+      headers: getHeaders(),
+      ...options
+    });
+
+    if (res.status === 401) {
+      localStorage.clear();
+      window.location.href = "/login.html";
+      throw new Error("Session expired");
+    }
+
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(errText || "API Error");
+    }
+
+    return await res.json();
+
+  } catch (err) {
+    showToast(err.message, "danger");
+    throw err;
+  } finally {
+    hideLoader();
   }
-
-  if (!res.ok) {
-    const errText = await res.text();
-    throw new Error(errText || "API request failed");
-  }
-
-  return res.json();
 }
