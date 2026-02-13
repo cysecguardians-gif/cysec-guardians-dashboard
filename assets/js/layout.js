@@ -1,52 +1,70 @@
-if (!localStorage.getItem("auth_token")) {
-  window.location.href = "/login.html";
-}
+// layout.js
+import { apiFetch } from "/assets/js/api.js";
 
-async function initLayout() {
+/* ===============================
+   Auth Guard
+=============================== */
+
+function requireAuth() {
   const token = localStorage.getItem("auth_token");
   if (!token) {
     window.location.href = "/login.html";
-    return;
   }
-
-  const res = await fetch("https://cysec-backend.onrender.com/me", {
-    headers: { "Authorization": "Bearer " + token }
-  });
-
-  const me = await res.json();
-
-  const sidebar = document.getElementById("sidebar");
-  sidebar.style.visibility = "hidden";
-
-  // Hide by CSS, DO NOT remove
-  if (!me.training_enabled) {
-    document.querySelectorAll(".menu-training").forEach(e => {
-      e.style.display = "none";
-    });
-  }
-
-  if (!me.phishing_enabled) {
-    document.querySelectorAll(".menu-phishing").forEach(e => {
-      e.style.display = "none";
-    });
-  }
-
-  if (me.role !== "admin") {
-    document.querySelectorAll(".admin-only").forEach(e => {
-      e.style.display = "none";
-    });
-  }
-
-  // Force CoreUI to recalc layout after visibility changes
-  setTimeout(() => {
-    sidebar.style.visibility = "visible";
-    window.dispatchEvent(new Event('resize'));
-  }, 50);
 }
 
-function logout() {
+/* ===============================
+   Logout
+=============================== */
+
+export function logout() {
   localStorage.clear();
   window.location.href = "/login.html";
+}
+
+window.logout = logout;
+
+/* ===============================
+   Layout Init
+=============================== */
+
+async function initLayout() {
+  try {
+    requireAuth();
+
+    const me = await apiFetch("/me");
+
+    const sidebar = document.getElementById("sidebar");
+    if (!sidebar) return;
+
+    sidebar.style.visibility = "hidden";
+
+    // Training menu
+    if (!me.training_enabled) {
+      document.querySelectorAll("#menu-training")
+        .forEach(e => e.style.display = "none");
+    }
+
+    // Phishing menu
+    if (!me.phishing_enabled) {
+      document.querySelectorAll("#menu-phishing")
+        .forEach(e => e.style.display = "none");
+    }
+
+    // Admin only
+    if (me.role !== "admin") {
+      document.querySelectorAll(".admin-only")
+        .forEach(e => e.style.display = "none");
+    }
+
+    setTimeout(() => {
+      sidebar.style.visibility = "visible";
+      window.dispatchEvent(new Event("resize"));
+    }, 50);
+
+  } catch (err) {
+    console.error("Layout init failed", err);
+    logout();
+  }
 }
 
 document.addEventListener("DOMContentLoaded", initLayout);
