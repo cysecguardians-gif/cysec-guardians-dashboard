@@ -1,45 +1,109 @@
-import { apiFetch } from "/assets/js/core/api.js";
-import { getState } from "../core/state.js";
-const assignedTable = document.getElementById("assignedTrainingTable");
-const catalogTable = document.getElementById("trainingCatalogTable");
+import { apiFetch } from "../core/api.js";
+import { createPage } from "../core/page.js";
 
-function renderAssigned(data) {
-  assignedTable.innerHTML = "";
+/* ======================================================
+   DOM HELPERS
+====================================================== */
+
+function getAssignedTable() {
+  return document.getElementById("assignedTrainingTable");
+}
+
+function getCatalogTable() {
+  return document.getElementById("trainingCatalogTable");
+}
+
+/* ======================================================
+   RENDERERS
+====================================================== */
+
+function renderAssigned(data = []) {
+  const table = getAssignedTable();
+  if (!table) return;
+
+  table.innerHTML = "";
+
+  if (!data.length) {
+    table.innerHTML =
+      `<tr><td colspan="4" class="text-center">
+        No assigned trainings
+      </td></tr>`;
+    return;
+  }
 
   data.forEach(t => {
-    assignedTable.innerHTML += `
-      <tr>
-        <td>${t.name}</td>
-        <td>${t.users_assigned}</td>
-        <td>${t.completion}%</td>
-        <td><button class="btn btn-sm btn-warning">Reassign</button></td>
-      </tr>
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+      <td>${t.name || ""}</td>
+      <td>${t.users_assigned ?? 0}</td>
+      <td>${t.completion ?? 0}%</td>
+      <td>
+        <button class="btn btn-sm btn-warning">
+          Reassign
+        </button>
+      </td>
     `;
+
+    table.appendChild(row);
   });
 }
 
-function renderCatalog(data) {
-  catalogTable.innerHTML = "";
+function renderCatalog(data = []) {
+  const table = getCatalogTable();
+  if (!table) return;
+
+  table.innerHTML = "";
+
+  if (!data.length) {
+    table.innerHTML =
+      `<tr><td colspan="4" class="text-center">
+        No trainings available
+      </td></tr>`;
+    return;
+  }
 
   data.forEach(t => {
-    catalogTable.innerHTML += `
-      <tr>
-        <td>${t.name}</td>
-        <td>${t.category}</td>
-        <td>${t.difficulty}</td>
-        <td><button class="btn btn-sm btn-primary">Assign</button></td>
-      </tr>
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+      <td>${t.name || ""}</td>
+      <td>${t.category || ""}</td>
+      <td>${t.difficulty || ""}</td>
+      <td>
+        <button class="btn btn-sm btn-primary">
+          Assign
+        </button>
+      </td>
     `;
+
+    table.appendChild(row);
   });
 }
+
+/* ======================================================
+   LOADERS
+====================================================== */
 
 async function loadTrainings() {
   try {
-    renderAssigned(await apiFetch("/trainings/assigned"));
-    renderCatalog(await apiFetch("/trainings/catalog"));
+    const [assigned, catalog] = await Promise.all([
+      apiFetch("/trainings/assigned"),
+      apiFetch("/trainings/catalog")
+    ]);
+
+    renderAssigned(assigned);
+    renderCatalog(catalog);
+
   } catch (err) {
-    console.error(err);
+    console.error("Failed loading trainings:", err);
   }
 }
 
-loadTrainings();
+/* ======================================================
+   UNIVERSAL PAGE INIT
+====================================================== */
+
+createPage(() => {
+  loadTrainings();
+});
