@@ -1,7 +1,8 @@
 // api.js
-// Self-Healing API Layer
+// Self-Healing API Layer + Chaos Testing Support
 
 import { logEvent } from "./observability.js";
+import { applyChaos } from "./chaos.js";
 
 /* ======================================================
    CONFIG
@@ -30,7 +31,7 @@ function sleep(ms) {
 }
 
 function backoffDelay(attempt) {
-  // exponential + jitter
+  // exponential backoff + jitter
   const jitter = Math.random() * 300;
   return BASE_DELAY * (2 ** attempt) + jitter;
 }
@@ -43,6 +44,10 @@ async function requestWithRetry(url, options, attempt = 0) {
 
   try {
 
+    // ⭐ CHAOS TESTING HOOK
+    // (does nothing unless chaos mode enabled)
+    await applyChaos();
+
     const res = await fetch(url, options);
 
     if (!res.ok) {
@@ -51,8 +56,12 @@ async function requestWithRetry(url, options, attempt = 0) {
 
     const data = await res.json();
 
+    // successful recovery log
     if (attempt > 0) {
-      logEvent("RECOVERY", `Recovered after retry (${attempt})`);
+      logEvent(
+        "RECOVERY",
+        `Recovered after retry (${attempt})`
+      );
     }
 
     return data;
@@ -64,6 +73,7 @@ async function requestWithRetry(url, options, attempt = 0) {
       `API failed (${attempt}) → ${url}`
     );
 
+    // max retries reached
     if (attempt >= MAX_RETRIES) {
 
       logEvent(
