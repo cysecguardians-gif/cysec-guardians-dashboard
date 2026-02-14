@@ -1,14 +1,15 @@
 // prefetch.js
-// Predictive Prefetch System
+// Predictive Prefetch Engine
 
 import { apiFetch } from "./api.js";
 import { setCache, getCache } from "./cache.js";
+import { logEvent } from "./observability.js";
 
 let started = false;
 
 /* ======================================================
    PREFETCH MAP
-   (what each page will likely need)
+   (Data expected per page)
 ====================================================== */
 
 const PREFETCH_MAP = {
@@ -21,28 +22,35 @@ const PREFETCH_MAP = {
     { key: "trainings_catalog", url: "/trainings/catalog" }
   ],
 
+  "/org-admin/phishing.html": [
+    { key: "phishing_campaigns", url: "/phishing/campaigns" }
+  ],
+
   "/org-admin/reports.html": [
     { key: "dashboard_summary", url: "/dashboard/summary" }
   ]
 };
 
 /* ======================================================
-   SAFE FETCH
+   PREFETCH SINGLE ITEM
 ====================================================== */
 
 async function prefetchItem({ key, url }) {
+
   try {
 
     // skip if already cached
     if (getCache(key)) return;
 
     const data = await apiFetch(url);
+
     setCache(key, data);
 
-    console.log("Prefetched:", key);
+    logEvent("PREFETCH", `Loaded: ${key}`);
 
   } catch (err) {
     console.warn("Prefetch failed:", key);
+    logEvent("PREFETCH", `Failed: ${key}`);
   }
 }
 
@@ -51,6 +59,7 @@ async function prefetchItem({ key, url }) {
 ====================================================== */
 
 export function prefetchForPath(path) {
+
   const items = PREFETCH_MAP[path];
   if (!items) return;
 
@@ -58,7 +67,7 @@ export function prefetchForPath(path) {
 }
 
 /* ======================================================
-   HOVER-BASED PREDICTION
+   HOVER PREDICTION
 ====================================================== */
 
 function setupHoverPrediction() {
@@ -67,7 +76,13 @@ function setupHoverPrediction() {
     .forEach(link => {
 
       link.addEventListener("mouseenter", () => {
-        prefetchForPath(link.getAttribute("href"));
+
+        const path = link.getAttribute("href");
+        if (!path) return;
+
+        logEvent("PREFETCH", `Hover predict: ${path}`);
+
+        prefetchForPath(path);
       });
 
     });
@@ -78,10 +93,16 @@ function setupHoverPrediction() {
 ====================================================== */
 
 function idlePrefetch() {
+
   if (!("requestIdleCallback" in window)) return;
 
   requestIdleCallback(() => {
-    Object.keys(PREFETCH_MAP).forEach(prefetchForPath);
+
+    logEvent("PREFETCH", "Idle prefetch started");
+
+    Object.keys(PREFETCH_MAP)
+      .forEach(prefetchForPath);
+
   });
 }
 
@@ -90,11 +111,14 @@ function idlePrefetch() {
 ====================================================== */
 
 export function startPrefetchEngine() {
+
   if (started) return;
   started = true;
 
   setupHoverPrediction();
   idlePrefetch();
+
+  logEvent("PREFETCH", "Prefetch engine started");
 
   console.log("Prefetch engine started");
 }
