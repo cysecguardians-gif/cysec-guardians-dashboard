@@ -1,30 +1,69 @@
-import { apiFetch } from "/assets/js/core/api.js";
-import { getState } from "../core/state.js";
-async function loadSettings() {
-  const data = await apiFetch("/org/settings");
+import { apiFetch } from "../core/api.js";
+import { createPage } from "../core/page.js";
 
-  orgName.value = data.org_name || "";
-  adminEmail.value = data.admin_email || "";
-  notifyPhishing.checked = !!data.notify_phishing;
-  notifyTraining.checked = !!data.notify_training;
+/* ======================================================
+   DOM HELPERS
+====================================================== */
+
+function getEl(id) {
+  return document.getElementById(id);
 }
+
+/* ======================================================
+   LOAD SETTINGS
+====================================================== */
+
+async function loadSettings() {
+  try {
+    const data = await apiFetch("/org/settings");
+
+    getEl("orgName").value = data.org_name || "";
+    getEl("adminEmail").value = data.admin_email || "";
+    getEl("notifyPhishing").checked = !!data.notify_phishing;
+    getEl("notifyTraining").checked = !!data.notify_training;
+
+  } catch (err) {
+    console.error("Failed loading settings:", err);
+  }
+}
+
+/* ======================================================
+   SAVE SETTINGS
+====================================================== */
 
 async function saveSettings() {
-  await apiFetch("/org/settings", {
-    method: "PUT",
-    body: JSON.stringify({
-      org_name: orgName.value,
-      admin_email: adminEmail.value,
-      notify_phishing: notifyPhishing.checked,
-      notify_training: notifyTraining.checked
-    })
-  });
+  try {
+    await apiFetch("/org/settings", {
+      method: "PUT",
+      body: JSON.stringify({
+        org_name: getEl("orgName").value,
+        admin_email: getEl("adminEmail").value,
+        notify_phishing: getEl("notifyPhishing").checked,
+        notify_training: getEl("notifyTraining").checked
+      })
+    });
 
-  alert("Settings saved");
+    alert("Settings saved");
+
+  } catch (err) {
+    console.error("Failed saving settings:", err);
+  }
 }
 
-document
-  .getElementById("saveSettingsBtn")
-  ?.addEventListener("click", saveSettings);
+/* ======================================================
+   EVENT BINDINGS
+====================================================== */
 
-loadSettings();
+function bindEvents() {
+  getEl("saveSettingsBtn")
+    ?.addEventListener("click", saveSettings);
+}
+
+/* ======================================================
+   UNIVERSAL PAGE INIT
+====================================================== */
+
+createPage(() => {
+  bindEvents();
+  loadSettings();
+});
