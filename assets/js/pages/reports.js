@@ -1,5 +1,5 @@
 import { apiFetch } from "/assets/js/api.js";
-
+import { getState } from "../core/state.js";
 async function download(type) {
   try {
     const res = await apiFetch(`/reports/${type}`);
