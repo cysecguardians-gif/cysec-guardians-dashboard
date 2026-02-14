@@ -1,9 +1,8 @@
 // phishingWizard.js
-// Intelligent Wizard Engine (KnowBe4-style)
+// Intelligent + Risk-Aware Wizard Engine
 
 import { showToast } from "../core/ui.js";
 import { getCache } from "../core/cache.js";
-
 
 /* ======================================================
    ELEMENTS
@@ -37,34 +36,38 @@ const campaignDraft = {
 };
 
 /* ======================================================
+   RISK HELPERS
+====================================================== */
+
+function getDepartmentRisk(deptName) {
+
+  const riskData =
+    getCache("department_risk") || [];
+
+  const dept = riskData.find(
+    d => d.department === deptName
+  );
+
+  return dept?.risk_score || 0;
+}
+
+function getRiskLevel(score) {
+  if (score >= 70) return "HIGH";
+  if (score >= 40) return "MEDIUM";
+  return "LOW";
+}
+
+/* ======================================================
    STEP CONFIG
 ====================================================== */
 
 const steps = [
-  {
-    render: renderGoalStep,
-    validate: () => !!campaignDraft.goal
-  },
-  {
-    render: renderTargetsStep,
-    validate: () => true
-  },
-  {
-    render: renderTemplateStep,
-    validate: () => true
-  },
-  {
-    render: renderDomainStep,
-    validate: () => true
-  },
-  {
-    render: renderScheduleStep,
-    validate: () => true
-  },
-  {
-    render: renderReviewStep,
-    validate: () => true
-  }
+  { render: renderGoalStep, validate: () => !!campaignDraft.goal },
+  { render: renderTargetsStep, validate: () => !!campaignDraft.targets },
+  { render: renderTemplateStep, validate: () => true },
+  { render: renderDomainStep, validate: () => true },
+  { render: renderScheduleStep, validate: () => true },
+  { render: renderReviewStep, validate: () => true }
 ];
 
 /* ======================================================
@@ -105,9 +108,7 @@ function renderStep() {
 }
 
 function updateNextButton() {
-
-  const valid = steps[currentStep].validate();
-  btnNext.disabled = !valid;
+  btnNext.disabled = !steps[currentStep].validate();
 }
 
 function nextStep() {
@@ -128,7 +129,6 @@ function nextStep() {
 
 function prevStep() {
   if (currentStep === 0) return;
-
   currentStep--;
   renderStep();
 }
@@ -144,16 +144,14 @@ function updateStepIndicator() {
 }
 
 /* ======================================================
-   STEP 1 — GOAL (INTELLIGENT)
+   STEP 1 — GOAL
 ====================================================== */
 
 function renderGoalStep() {
 
   stepContainer.innerHTML = `
     <h5>Step 1 — Campaign Goal</h5>
-    <p class="text-muted">
-      Select what you want to test.
-    </p>
+    <p class="text-muted">Select what you want to test.</p>
 
     <div class="row g-3">
       ${goalBtn("invoice","Invoice Fraud")}
@@ -166,14 +164,11 @@ function renderGoalStep() {
     .forEach(btn => {
       btn.addEventListener("click", () => {
 
-        campaignDraft.goal =
-          btn.dataset.goal;
+        campaignDraft.goal = btn.dataset.goal;
 
-        showToast("Goal selected","success");
-
-        // 🔥 Intelligent reaction:
         applyGoalDefaults();
 
+        showToast("Goal selected","success");
         updateNextButton();
       });
     });
@@ -195,37 +190,102 @@ function goalBtn(id,label){
 
 function applyGoalDefaults() {
 
-  // intelligent recommendation logic
-  if (campaignDraft.goal === "invoice") {
+  if (campaignDraft.goal === "invoice")
     campaignDraft.template = "invoice_template";
-  }
 
-  if (campaignDraft.goal === "credential") {
+  if (campaignDraft.goal === "credential")
     campaignDraft.template = "login_template";
-  }
 
-  if (campaignDraft.goal === "hr") {
+  if (campaignDraft.goal === "hr")
     campaignDraft.template = "hr_template";
-  }
-
-  console.log("Smart defaults applied", campaignDraft);
 }
 
 /* ======================================================
-   STEP 2
+   STEP 2 — TARGETS + RISK INTELLIGENCE
 ====================================================== */
 
 function renderTargetsStep() {
+
   stepContainer.innerHTML = `
     <h5>Step 2 — Target Users</h5>
-    <p class="text-muted">
-      Target selector coming next.
-    </p>
+    <p class="text-muted">Select a target department.</p>
+
+    <div class="row g-3">
+      ${deptBtn("Finance")}
+      ${deptBtn("HR")}
+      ${deptBtn("Sales")}
+    </div>
+
+    <div id="riskHint" class="mt-3"></div>
+  `;
+
+  document.querySelectorAll(".dept-btn")
+    .forEach(btn => {
+
+      btn.addEventListener("click", () => {
+
+        const dept = btn.dataset.dept;
+        campaignDraft.targets = dept;
+
+        applyRiskIntelligence(dept);
+
+        updateNextButton();
+      });
+    });
+}
+
+function deptBtn(name){
+  return `
+  <div class="col-md-4">
+    <button class="btn btn-outline-primary w-100 dept-btn"
+      data-dept="${name}">
+      ${name}
+    </button>
+  </div>`;
+}
+
+/* ======================================================
+   LIVE RISK INTELLIGENCE
+====================================================== */
+
+function applyRiskIntelligence(dept) {
+
+  const score = getDepartmentRisk(dept);
+  const level = getRiskLevel(score);
+
+  const riskHint = document.getElementById("riskHint");
+  if (!riskHint) return;
+
+  let alertType = "success";
+  let message = `Low risk department.`;
+
+  if (level === "HIGH") {
+    alertType = "danger";
+    message =
+      `⚠ ${dept} is HIGH risk. Recommended advanced template.`;
+    campaignDraft.template = "high_risk_template";
+  }
+
+  if (level === "MEDIUM") {
+    alertType = "warning";
+    message =
+      `⚠ ${dept} has MEDIUM risk. Recommended realistic simulation.`;
+    campaignDraft.template = "medium_risk_template";
+  }
+
+  if (level === "LOW") {
+    campaignDraft.template = "basic_template";
+  }
+
+  riskHint.innerHTML = `
+    <div class="alert alert-${alertType}">
+      ${message}
+    </div>
   `;
 }
 
 /* ======================================================
-   STEP 3 (SMART TEMPLATE)
+   STEP 3 — TEMPLATE
 ====================================================== */
 
 function renderTemplateStep() {
@@ -277,6 +337,8 @@ function renderReviewStep() {
 
     <div class="alert alert-info">
       <strong>Goal:</strong> ${campaignDraft.goal || "--"}<br>
+      <strong>Targets:</strong> ${campaignDraft.targets || "--"}<br>
+      <strong>Template:</strong> ${campaignDraft.template || "--"}
     </div>
   `;
 }
@@ -300,7 +362,6 @@ function launchCampaign() {
 
 btnLaunch?.addEventListener("click", openWizard);
 btnCancel?.addEventListener("click", closeWizard);
-
 btnNext?.addEventListener("click", nextStep);
 btnBack?.addEventListener("click", prevStep);
 
@@ -309,5 +370,5 @@ btnBack?.addEventListener("click", prevStep);
 ====================================================== */
 
 export function initPhishingWizard() {
-  console.log("Intelligent wizard ready");
+  console.log("Risk-aware wizard ready");
 }
