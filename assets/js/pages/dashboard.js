@@ -1,14 +1,12 @@
 // dashboard.js
-// Org Admin Dashboard Logic
-// Requires: api.js (apiFetch function)
+import { apiFetch } from "../core/api.js";
+import { subscribe } from "../core/state.js";
 
-import { apiFetch } from './api.js';
-import { getState } from "../core/state.js";
 /* ======================================================
    CONFIG
 ====================================================== */
 
-const REFRESH_INTERVAL = 60000; // 60 sec auto refresh (optional)
+const REFRESH_INTERVAL = 60000;
 
 /* ======================================================
    HELPERS
@@ -19,8 +17,8 @@ function setText(id, value) {
   if (el) el.textContent = value ?? "--";
 }
 
-function showError(message) {
-  console.error("Dashboard Error:", message);
+function showError(err) {
+  console.error("Dashboard Error:", err);
 }
 
 /* ======================================================
@@ -28,19 +26,13 @@ function showError(message) {
 ====================================================== */
 
 async function loadKPIs() {
-  try {
-    // Example endpoint (adjust to your backend)
-    const data = await apiFetch('/dashboard/summary');
+  const data = await apiFetch("/dashboard/summary");
 
-    setText("kpi-total-users", data.total_users);
-    setText("kpi-compliant-users", data.compliant_users);
-    setText("kpi-pending-training", data.pending_training);
-    setText("kpi-failed-phishing", data.failed_phishing);
-    setText("kpi-awareness-score", data.awareness_score);
-
-  } catch (err) {
-    showError(err);
-  }
+  setText("kpi-total-users", data.total_users);
+  setText("kpi-compliant-users", data.compliant_users);
+  setText("kpi-pending-training", data.pending_training);
+  setText("kpi-failed-phishing", data.failed_phishing);
+  setText("kpi-awareness-score", data.awareness_score);
 }
 
 /* ======================================================
@@ -66,10 +58,7 @@ function createPhishingTrendChart(labels = [], values = []) {
         tension: 0.3
       }]
     },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false
-    }
+    options: { responsive: true, maintainAspectRatio: false }
   });
 }
 
@@ -88,54 +77,58 @@ function createDepartmentRiskChart(labels = [], values = []) {
         data: values
       }]
     },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false
-    }
+    options: { responsive: true, maintainAspectRatio: false }
   });
 }
 
 /* ======================================================
-   ANALYTICS LOADERS
+   ANALYTICS
 ====================================================== */
 
 async function loadAnalytics() {
+  const trend = await apiFetch("/analytics/phishing-trend");
+
+  createPhishingTrendChart(
+    trend.map(i => i.date),
+    trend.map(i => i.value)
+  );
+
+  const dept = await apiFetch("/analytics/department-risk");
+
+  createDepartmentRiskChart(
+    dept.map(i => i.department),
+    dept.map(i => i.risk_score)
+  );
+}
+
+/* ======================================================
+   MAIN DASHBOARD LOAD
+====================================================== */
+
+async function loadDashboard() {
   try {
-    // 1️⃣ Phishing trend
-    const trend = await apiFetch('/analytics/phishing-trend');
-
-    createPhishingTrendChart(
-      trend.map(i => i.date),
-      trend.map(i => i.value)
-    );
-
-    // 2️⃣ Department risk
-    const dept = await apiFetch('/analytics/department-risk');
-
-    createDepartmentRiskChart(
-      dept.map(i => i.department),
-      dept.map(i => i.risk_score)
-    );
-
+    await Promise.all([
+      loadKPIs(),
+      loadAnalytics()
+    ]);
   } catch (err) {
     showError(err);
   }
 }
 
 /* ======================================================
-   DASHBOARD INIT
+   EXPORT INIT (IMPORTANT)
 ====================================================== */
 
-async function loadDashboard() {
-  await Promise.all([
-    loadKPIs(),
-    loadAnalytics()
-  ]);
-}
+export function init() {
 
-document.addEventListener("DOMContentLoaded", () => {
-  loadDashboard();
+  // wait until global state is ready
+  subscribe((state) => {
+    if (state.user) {
+      loadDashboard();
+    }
+  });
 
-  // Optional auto refresh
+  // optional auto-refresh
   setInterval(loadDashboard, REFRESH_INTERVAL);
-});
+}
