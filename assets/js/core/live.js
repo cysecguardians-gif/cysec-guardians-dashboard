@@ -1,22 +1,25 @@
 import { apiFetch } from "./api.js";
 import { setCache } from "./cache.js";
 import { onVisibilityChange } from "./scheduler.js";
+import { LIVE_PRIORITY } from "./livePriority.js";
 
 const listeners = new Set();
 
-let ws = null;
-let pollTimer = null;
-
 let started = false;
 
+let timers = {};
+
 /* ======================================================
-   INTERVALS
+   INTERVALS (priority-based)
 ====================================================== */
 
-const FAST_INTERVAL = 30000;   // active tab
-const SLOW_INTERVAL = 180000;  // hidden tab (3 mins)
+const INTERVALS = {
+  HIGH: 15000,   // 15s
+  MEDIUM: 60000, // 1 min
+  LOW: 180000    // 3 min
+};
 
-let currentInterval = FAST_INTERVAL;
+const HIDDEN_MULTIPLIER = 3;
 
 /* ======================================================
    PUBLIC SUBSCRIBE
@@ -38,125 +41,64 @@ function emit() {
 }
 
 /* ======================================================
-   CACHE REFRESH
+   FETCH GROUP
 ====================================================== */
 
-async function refreshCache() {
+async function refreshGroup(group) {
+
+  const items = LIVE_PRIORITY[group];
+  if (!items) return;
+
   try {
-    setCache(
-      "dashboard_summary",
-      await apiFetch("/dashboard/summary")
-    );
 
-    setCache(
-      "phishing_trend",
-      await apiFetch("/analytics/phishing-trend")
-    );
-
-    setCache(
-      "department_risk",
-      await apiFetch("/analytics/department-risk")
-    );
-
-    setCache(
-      "phishing_campaigns",
-      await apiFetch("/phishing/campaigns")
-    );
+    for (const item of items) {
+      const data = await apiFetch(item.url);
+      setCache(item.key, data);
+    }
 
     emit();
 
   } catch (err) {
-    console.error("Live refresh failed:", err);
+    console.error("Priority refresh failed:", group);
   }
 }
 
 /* ======================================================
-   POLLING MODE
+   START GROUP TIMER
 ====================================================== */
 
-function restartPolling(interval) {
+function startGroup(group, interval) {
 
-  currentInterval = interval;
-
-  if (pollTimer) {
-    clearInterval(pollTimer);
+  if (timers[group]) {
+    clearInterval(timers[group]);
   }
 
-  refreshCache();
+  refreshGroup(group);
 
-  pollTimer = setInterval(
-    refreshCache,
-    currentInterval
-  );
+  timers[group] = setInterval(() => {
+    refreshGroup(group);
+  }, interval);
 
-  console.log(
-    "Live polling interval:",
-    currentInterval
-  );
+  console.log("Priority started:", group, interval);
 }
 
 /* ======================================================
-   WEBSOCKET MODE
+   ADAPTIVE VISIBILITY
 ====================================================== */
 
-function connectWebSocket() {
-
-  try {
-    ws = new WebSocket(
-      "wss://cysec-backend.onrender.com/ws/live"
-    );
-
-    ws.onopen = () => {
-      console.log("WebSocket connected");
-    };
-
-    ws.onmessage = (msg) => {
-      try {
-        const data = JSON.parse(msg.data);
-
-        if (data.key) {
-          setCache(data.key, data.payload);
-          emit();
-        }
-
-      } catch (err) {
-        console.error("WS parse error", err);
-      }
-    };
-
-    ws.onclose = () => {
-      console.warn("WS closed → polling fallback");
-      restartPolling(FAST_INTERVAL);
-    };
-
-    ws.onerror = () => {
-      console.warn("WS error → polling fallback");
-      restartPolling(FAST_INTERVAL);
-    };
-
-  } catch {
-    restartPolling(FAST_INTERVAL);
-  }
-}
-
-/* ======================================================
-   ADAPTIVE BEHAVIOR
-====================================================== */
-
-function setupAdaptiveScheduling() {
+function setupAdaptivePriority() {
 
   onVisibilityChange((visible) => {
 
-    if (ws && ws.readyState === WebSocket.OPEN) {
-      // websocket already efficient
-      return;
-    }
+    const multiplier = visible ? 1 : HIDDEN_MULTIPLIER;
 
-    if (visible) {
-      restartPolling(FAST_INTERVAL);
-    } else {
-      restartPolling(SLOW_INTERVAL);
-    }
+    Object.keys(INTERVALS).forEach(group => {
+      startGroup(
+        group,
+        INTERVALS[group] * multiplier
+      );
+    });
+
   });
 }
 
@@ -166,13 +108,11 @@ function setupAdaptiveScheduling() {
 
 export function startLiveEngine() {
   if (started) return;
-
   started = true;
 
-  connectWebSocket();
-  setupAdaptiveScheduling();
+  setupAdaptivePriority();
 
-  console.log("Adaptive Live Engine started");
+  console.log("Intelligent priority scheduler started");
 }
 
 /* ======================================================
@@ -180,10 +120,7 @@ export function startLiveEngine() {
 ====================================================== */
 
 export function stopLiveEngine() {
-  if (ws) ws.close();
-  if (pollTimer) clearInterval(pollTimer);
-
-  ws = null;
-  pollTimer = null;
+  Object.values(timers).forEach(clearInterval);
+  timers = {};
   started = false;
 }
