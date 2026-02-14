@@ -1,7 +1,6 @@
 import { apiFetch } from "../core/api.js";
 import { createPage } from "../core/page.js";
-
-const REFRESH_INTERVAL = 60000;
+import { onLiveUpdate } from "../core/live.js";
 
 /* ======================================================
    HELPERS
@@ -123,15 +122,17 @@ async function loadDashboard() {
 }
 
 /* ======================================================
-   UNIVERSAL REACTIVE PAGE INIT
+   UNIVERSAL PAGE INIT
 ====================================================== */
 
 createPage(() => {
 
-  // first load
+  // Initial load
   loadDashboard();
 
-  // auto refresh
-  setInterval(loadDashboard, REFRESH_INTERVAL);
+  // ⭐ Global live engine updates
+  onLiveUpdate(() => {
+    loadDashboard();
+  });
 
 });
