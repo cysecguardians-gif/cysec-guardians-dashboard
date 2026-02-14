@@ -2,7 +2,7 @@
 import { apiFetch } from "./api.js";
 
 /* ===============================
-   GLOBAL APP STATE
+   INTERNAL STATE
 =============================== */
 
 const state = {
@@ -11,35 +11,52 @@ const state = {
   loaded: false
 };
 
+const listeners = new Set();
+
 /* ===============================
-   Load App State (once)
+   SUBSCRIBE SYSTEM
+=============================== */
+
+export function subscribe(fn) {
+  listeners.add(fn);
+  return () => listeners.delete(fn);
+}
+
+function notify() {
+  listeners.forEach(fn => fn(state));
+}
+
+/* ===============================
+   GET STATE
+=============================== */
+
+export function getState() {
+  return state;
+}
+
+/* ===============================
+   UPDATE STATE
+=============================== */
+
+export function updateState(updates) {
+  Object.assign(state, updates);
+  notify();
+}
+
+/* ===============================
+   LOAD STATE ONCE
 =============================== */
 
 export async function loadAppState() {
   if (state.loaded) return state;
 
-  try {
-    const me = await apiFetch("/me");
+  const me = await apiFetch("/me");
 
-    state.user = me;
-    state.org = {
-      id: me.org_id
-    };
+  updateState({
+    user: me,
+    org: { id: me.org_id },
+    loaded: true
+  });
 
-    state.loaded = true;
-
-    return state;
-
-  } catch (err) {
-    console.error("Failed loading app state", err);
-    throw err;
-  }
-}
-
-/* ===============================
-   Get State
-=============================== */
-
-export function getState() {
   return state;
 }
