@@ -1,6 +1,7 @@
 import { loadAppState } from "./state.js";
 import { startLiveEngine } from "./live.js";
 import { startPrefetchEngine } from "./prefetch.js";
+import { startNavigationAI } from "./navigationAI.js";
 
 async function bootstrap() {
   try {
@@ -8,6 +9,9 @@ async function bootstrap() {
 
     startLiveEngine();
     startPrefetchEngine();
+
+    // ⭐ NEW
+    startNavigationAI();
 
     console.log("App bootstrapped");
 
