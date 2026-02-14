@@ -1,4 +1,4 @@
-import { apiFetch } from "/assets/js/api.js";
+import { apiFetch } from "/assets/js/core/api.js";
 import { getState } from "../core/state.js";
 async function loadSettings() {
   const data = await apiFetch("/org/settings");
