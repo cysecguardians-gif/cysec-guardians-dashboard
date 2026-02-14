@@ -1,15 +1,18 @@
 // live.js
-// Global Live Update Engine
+// Global Live Engine + Cache Refresher
+
+import { apiFetch } from "./api.js";
+import { setCache } from "./cache.js";
 
 const listeners = new Set();
 
-let intervalId = null;
 let started = false;
+let intervalId = null;
 
-const DEFAULT_INTERVAL = 60000; // 60s
+const INTERVAL = 60000; // 60 seconds
 
 /* ======================================================
-   Subscribe
+   PUBLIC SUBSCRIBE
 ====================================================== */
 
 export function onLiveUpdate(fn) {
@@ -18,7 +21,7 @@ export function onLiveUpdate(fn) {
 }
 
 /* ======================================================
-   Trigger
+   EMIT UPDATE EVENT
 ====================================================== */
 
 function emit() {
@@ -32,23 +35,61 @@ function emit() {
 }
 
 /* ======================================================
-   Start Engine (only once)
+   FETCH & UPDATE CACHE
 ====================================================== */
 
-export function startLiveEngine(interval = DEFAULT_INTERVAL) {
+async function refreshCache() {
+  try {
+    // Dashboard KPI data
+    setCache(
+      "dashboard_summary",
+      await apiFetch("/dashboard/summary")
+    );
+
+    // Dashboard analytics
+    setCache(
+      "phishing_trend",
+      await apiFetch("/analytics/phishing-trend")
+    );
+
+    setCache(
+      "department_risk",
+      await apiFetch("/analytics/department-risk")
+    );
+
+    // Phishing campaigns
+    setCache(
+      "phishing_campaigns",
+      await apiFetch("/phishing/campaigns")
+    );
+
+  } catch (err) {
+    console.error("Live cache refresh failed:", err);
+  }
+}
+
+/* ======================================================
+   START ENGINE
+====================================================== */
+
+export function startLiveEngine() {
   if (started) return;
 
   started = true;
 
-  intervalId = setInterval(() => {
-    emit();
-  }, interval);
+  // first load immediately
+  refreshCache().then(emit);
 
-  console.log("Live engine started");
+  intervalId = setInterval(async () => {
+    await refreshCache();
+    emit();
+  }, INTERVAL);
+
+  console.log("Global live engine started");
 }
 
 /* ======================================================
-   Optional stop (future use)
+   STOP ENGINE (optional future use)
 ====================================================== */
 
 export function stopLiveEngine() {
