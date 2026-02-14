@@ -1,19 +1,43 @@
-import { apiFetch } from "/assets/js/core/api.js";
-import { getState } from "../core/state.js";
+import { apiFetch } from "../core/api.js";
+import { createPage } from "../core/page.js";
+
+/* ======================================================
+   DOWNLOAD HANDLER
+====================================================== */
+
 async function download(type) {
   try {
     const res = await apiFetch(`/reports/${type}`);
-    window.open(res.url, "_blank");
+
+    if (res?.url) {
+      window.open(res.url, "_blank");
+    }
+
   } catch (err) {
-    console.error(err);
+    console.error("Report download failed:", err);
   }
 }
 
-document.getElementById("downloadTrainingReport")
-  ?.addEventListener("click", () => download("training"));
+/* ======================================================
+   EVENT BINDINGS
+====================================================== */
 
-document.getElementById("downloadPhishingReport")
-  ?.addEventListener("click", () => download("phishing"));
+function bindEvents() {
 
-document.getElementById("downloadComplianceReport")
-  ?.addEventListener("click", () => download("compliance"));
+  document.getElementById("downloadTrainingReport")
+    ?.addEventListener("click", () => download("training"));
+
+  document.getElementById("downloadPhishingReport")
+    ?.addEventListener("click", () => download("phishing"));
+
+  document.getElementById("downloadComplianceReport")
+    ?.addEventListener("click", () => download("compliance"));
+}
+
+/* ======================================================
+   UNIVERSAL PAGE INIT
+====================================================== */
+
+createPage(() => {
+  bindEvents();
+});
