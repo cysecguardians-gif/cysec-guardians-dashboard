@@ -1,12 +1,22 @@
-import { showLoader, hideLoader, showToast } from "./ui.js";
+// api.js
+// Self-Healing API Layer
+
+import { logEvent } from "./observability.js";
+
+/* ======================================================
+   CONFIG
+====================================================== */
 
 const API_BASE = "https://cysec-backend.onrender.com";
 
-/* ===============================
-   Headers
-=============================== */
+const MAX_RETRIES = 3;
+const BASE_DELAY = 800; // ms
 
-function getHeaders() {
+/* ======================================================
+   HELPERS
+====================================================== */
+
+function getAuthHeaders() {
   const token = localStorage.getItem("auth_token");
 
   return {
@@ -15,36 +25,88 @@ function getHeaders() {
   };
 }
 
-/* ===============================
-   Universal API
-=============================== */
+function sleep(ms) {
+  return new Promise(res => setTimeout(res, ms));
+}
 
-export async function apiFetch(path, options = {}) {
+function backoffDelay(attempt) {
+  // exponential + jitter
+  const jitter = Math.random() * 300;
+  return BASE_DELAY * (2 ** attempt) + jitter;
+}
+
+/* ======================================================
+   CORE REQUEST WITH RETRY
+====================================================== */
+
+async function requestWithRetry(url, options, attempt = 0) {
+
   try {
-    showLoader();
 
-    const res = await fetch(`${API_BASE}${path}`, {
-      headers: getHeaders(),
-      ...options
-    });
-
-    if (res.status === 401) {
-      localStorage.clear();
-      window.location.href = "/login.html";
-      throw new Error("Session expired");
-    }
+    const res = await fetch(url, options);
 
     if (!res.ok) {
-      const errText = await res.text();
-      throw new Error(errText || "API Error");
+      throw new Error(`HTTP ${res.status}`);
     }
 
-    return await res.json();
+    const data = await res.json();
+
+    if (attempt > 0) {
+      logEvent("RECOVERY", `Recovered after retry (${attempt})`);
+    }
+
+    return data;
 
   } catch (err) {
-    showToast(err.message, "danger");
-    throw err;
-  } finally {
-    hideLoader();
+
+    logEvent(
+      "ERROR",
+      `API failed (${attempt}) → ${url}`
+    );
+
+    if (attempt >= MAX_RETRIES) {
+
+      logEvent(
+        "ERROR",
+        `Permanent failure: ${url}`
+      );
+
+      throw err;
+    }
+
+    const delay = backoffDelay(attempt);
+
+    logEvent(
+      "RECOVERY",
+      `Retrying in ${Math.round(delay)}ms`
+    );
+
+    await sleep(delay);
+
+    return requestWithRetry(
+      url,
+      options,
+      attempt + 1
+    );
   }
+}
+
+/* ======================================================
+   PUBLIC API
+====================================================== */
+
+export async function apiFetch(path, options = {}) {
+
+  const url = `${API_BASE}${path}`;
+
+  const config = {
+    method: options.method || "GET",
+    headers: {
+      ...getAuthHeaders(),
+      ...(options.headers || {})
+    },
+    body: options.body
+  };
+
+  return requestWithRetry(url, config);
 }
