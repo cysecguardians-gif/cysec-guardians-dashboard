@@ -1,46 +1,34 @@
-// app.js
-// Automatic Page Bootstrap Engine
+import { loadAppState } from "./state.js";
 
 const PAGE_MAP = {
-  "index.html":      () => import("../pages/dashboard.js"),
-  "users.html":      () => import("../pages/users.js"),
-  "trainings.html":  () => import("../pages/trainings.js"),
-  "phishing.html":   () => import("../pages/phishing.js"),
-  "reports.html":    () => import("../pages/reports.js"),
-  "settings.html":   () => import("../pages/settings.js")
+  "index.html": () => import("../pages/dashboard.js"),
+  "users.html": () => import("../pages/users.js"),
+  "trainings.html": () => import("../pages/trainings.js"),
+  "phishing.html": () => import("../pages/phishing.js"),
+  "reports.html": () => import("../pages/reports.js"),
+  "settings.html": () => import("../pages/settings.js")
 };
 
-/* ===============================
-   Detect Current Page
-=============================== */
-
 function getCurrentPage() {
-  const path = window.location.pathname;
-  return path.split("/").pop();
+  return window.location.pathname.split("/").pop();
 }
 
-/* ===============================
-   Bootstrap
-=============================== */
-
 async function bootstrap() {
-  const page = getCurrentPage();
-
-  if (!PAGE_MAP[page]) {
-    console.warn("No page controller for:", page);
-    return;
-  }
-
   try {
+    // 🔥 LOAD GLOBAL STATE FIRST
+    await loadAppState();
+
+    const page = getCurrentPage();
+    if (!PAGE_MAP[page]) return;
+
     const module = await PAGE_MAP[page]();
 
-    // auto-run init if exported
     if (module.init) {
       module.init();
     }
 
   } catch (err) {
-    console.error("Page bootstrap failed:", err);
+    console.error("Bootstrap failed", err);
   }
 }
 
