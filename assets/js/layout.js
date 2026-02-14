@@ -1,5 +1,5 @@
-import { apiFetch } from "./core/api.js";
 import { PAGE_CONFIG } from "./core/pageConfig.js";
+import { getState } from "./core/state.js";
 
 /* ===============================
    Helpers
@@ -8,10 +8,6 @@ import { PAGE_CONFIG } from "./core/pageConfig.js";
 function getCurrentPage() {
   return window.location.pathname.split("/").pop();
 }
-
-/* ===============================
-   Sidebar Active Auto Highlight
-=============================== */
 
 function setActiveNav(navPath) {
   document.querySelectorAll(".sidebar-nav .nav-link")
@@ -24,52 +20,40 @@ function setActiveNav(navPath) {
   if (active) active.classList.add("active");
 }
 
-/* ===============================
-   Page Title Auto Update
-=============================== */
-
 function setPageTitle(title) {
   const headerTitle = document.querySelector("header h5");
   if (headerTitle) headerTitle.textContent = title;
-
   document.title = title;
 }
 
 /* ===============================
-   Init Layout
+   Layout Init
 =============================== */
 
-async function initLayout() {
-  try {
-    const page = getCurrentPage();
-    const config = PAGE_CONFIG[page];
+function initLayout() {
+  const page = getCurrentPage();
+  const config = PAGE_CONFIG[page];
 
-    if (config) {
-      setActiveNav(config.nav);
-      setPageTitle(config.title);
-    }
+  if (config) {
+    setActiveNav(config.nav);
+    setPageTitle(config.title);
+  }
 
-    // User permissions
-    const me = await apiFetch("/me");
+  // 🔥 USE GLOBAL STATE
+  const { user } = getState();
 
-    if (!me.training_enabled) {
-      document.querySelectorAll("#menu-training")
-        .forEach(e => e.style.display = "none");
-    }
+  if (!user) return;
 
-    if (!me.phishing_enabled) {
-      document.querySelectorAll("#menu-phishing")
-        .forEach(e => e.style.display = "none");
-    }
+  if (!user.training_enabled) {
+    document.querySelectorAll("#menu-training")
+      .forEach(e => e.style.display = "none");
+  }
 
-  } catch (err) {
-    console.error("Layout error:", err);
+  if (!user.phishing_enabled) {
+    document.querySelectorAll("#menu-phishing")
+      .forEach(e => e.style.display = "none");
   }
 }
-
-/* ===============================
-   Logout
-=============================== */
 
 window.logout = function () {
   localStorage.clear();
