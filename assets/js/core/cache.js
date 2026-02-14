@@ -1,5 +1,5 @@
 // cache.js
-// Global Reactive Cache Layer
+// Global Reactive Cache with Smart TTL
 
 import { logEvent } from "./observability.js";
 
@@ -11,20 +11,68 @@ const cache = {};
 const listeners = new Map();
 
 /* ======================================================
+   DEFAULT TTLs (ms)
+====================================================== */
+
+const DEFAULT_TTL = 5 * 60 * 1000; // 5 min
+
+const TTL_MAP = {
+  dashboard_summary: 30000,      // 30s
+  phishing_campaigns: 30000,
+  phishing_trend: 60000,
+  department_risk: 180000,
+  users_list: 300000
+};
+
+/* ======================================================
+   HELPERS
+====================================================== */
+
+function now() {
+  return Date.now();
+}
+
+function isExpired(entry) {
+  if (!entry) return true;
+  return entry.expiresAt <= now();
+}
+
+/* ======================================================
    GET CACHE
 ====================================================== */
 
 export function getCache(key) {
-  return cache[key];
+
+  const entry = cache[key];
+
+  if (!entry) return undefined;
+
+  if (isExpired(entry)) {
+
+    logEvent("CACHE", `Expired: ${key}`);
+
+    delete cache[key];
+    return undefined;
+  }
+
+  return entry.data;
 }
 
 /* ======================================================
    SET CACHE
 ====================================================== */
 
-export function setCache(key, value) {
+export function setCache(key, value, ttl) {
 
-  cache[key] = value;
+  const ttlValue =
+    ttl ||
+    TTL_MAP[key] ||
+    DEFAULT_TTL;
+
+  cache[key] = {
+    data: value,
+    expiresAt: now() + ttlValue
+  };
 
   logEvent("CACHE", `Updated: ${key}`);
 
@@ -41,7 +89,7 @@ export function setCache(key, value) {
 }
 
 /* ======================================================
-   REMOVE CACHE (optional helper)
+   CLEAR CACHE
 ====================================================== */
 
 export function clearCache(key) {
@@ -56,7 +104,7 @@ export function clearCache(key) {
 }
 
 /* ======================================================
-   CLEAR ALL CACHE
+   CLEAR ALL
 ====================================================== */
 
 export function clearAllCache() {
@@ -65,7 +113,7 @@ export function clearAllCache() {
 }
 
 /* ======================================================
-   SUBSCRIBE TO CACHE KEY
+   SUBSCRIBE
 ====================================================== */
 
 export function subscribeCache(key, fn) {
@@ -76,10 +124,10 @@ export function subscribeCache(key, fn) {
 
   listeners.get(key).add(fn);
 
-  // immediate push if data exists
-  if (cache[key] !== undefined) {
+  const value = getCache(key);
+  if (value !== undefined) {
     try {
-      fn(cache[key]);
+      fn(value);
     } catch (err) {
       console.error("Cache immediate callback error:", err);
     }
