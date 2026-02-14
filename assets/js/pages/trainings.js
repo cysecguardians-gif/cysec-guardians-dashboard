@@ -1,4 +1,4 @@
-import { apiFetch } from "/assets/js/api.js";
+import { apiFetch } from "/assets/js/core/api.js";
 import { getState } from "../core/state.js";
 const assignedTable = document.getElementById("assignedTrainingTable");
 const catalogTable = document.getElementById("trainingCatalogTable");
