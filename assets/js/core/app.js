@@ -1,35 +1,30 @@
+// app.js
+// Global Application Bootstrap
+
 import { loadAppState } from "./state.js";
+import { startLiveEngine } from "./live.js";
 
-const PAGE_MAP = {
-  "index.html": () => import("../pages/dashboard.js"),
-  "users.html": () => import("../pages/users.js"),
-  "trainings.html": () => import("../pages/trainings.js"),
-  "phishing.html": () => import("../pages/phishing.js"),
-  "reports.html": () => import("../pages/reports.js"),
-  "settings.html": () => import("../pages/settings.js")
-};
-
-function getCurrentPage() {
-  return window.location.pathname.split("/").pop();
-}
+/* ======================================================
+   APP BOOTSTRAP
+====================================================== */
 
 async function bootstrap() {
   try {
-    // 🔥 LOAD GLOBAL STATE FIRST
+    // 1️⃣ Load global user/org state once
     await loadAppState();
 
-    const page = getCurrentPage();
-    if (!PAGE_MAP[page]) return;
+    // 2️⃣ Start global live update engine
+    startLiveEngine();
 
-    const module = await PAGE_MAP[page]();
-
-    if (module.init) {
-      module.init();
-    }
+    console.log("App bootstrapped successfully");
 
   } catch (err) {
-    console.error("Bootstrap failed", err);
+    console.error("Bootstrap failed:", err);
   }
 }
+
+/* ======================================================
+   START APP
+====================================================== */
 
 document.addEventListener("DOMContentLoaded", bootstrap);
