@@ -1,5 +1,6 @@
 import { apiFetch } from "../core/api.js";
 import { createPage } from "../core/page.js";
+import { onLiveUpdate } from "../core/live.js";
 
 /* ======================================================
    HELPERS
@@ -56,5 +57,13 @@ async function loadCampaigns() {
 ====================================================== */
 
 createPage(() => {
+
+  // Initial load
   loadCampaigns();
+
+  // ⭐ Global live updates
+  onLiveUpdate(() => {
+    loadCampaigns();
+  });
+
 });
