@@ -1,5 +1,5 @@
 // live.js
-// Global Live Engine + Cache Refresher
+// WebSocket-ready Live Engine
 
 import { apiFetch } from "./api.js";
 import { setCache } from "./cache.js";
@@ -7,9 +7,10 @@ import { setCache } from "./cache.js";
 const listeners = new Set();
 
 let started = false;
-let intervalId = null;
+let ws = null;
+let fallbackInterval = null;
 
-const INTERVAL = 60000; // 60 seconds
+const POLL_INTERVAL = 60000;
 
 /* ======================================================
    PUBLIC SUBSCRIBE
@@ -19,10 +20,6 @@ export function onLiveUpdate(fn) {
   listeners.add(fn);
   return () => listeners.delete(fn);
 }
-
-/* ======================================================
-   EMIT UPDATE EVENT
-====================================================== */
 
 function emit() {
   listeners.forEach(fn => {
@@ -35,18 +32,16 @@ function emit() {
 }
 
 /* ======================================================
-   FETCH & UPDATE CACHE
+   CACHE REFRESH (fallback polling)
 ====================================================== */
 
 async function refreshCache() {
   try {
-    // Dashboard KPI data
     setCache(
       "dashboard_summary",
       await apiFetch("/dashboard/summary")
     );
 
-    // Dashboard analytics
     setCache(
       "phishing_trend",
       await apiFetch("/analytics/phishing-trend")
@@ -57,15 +52,76 @@ async function refreshCache() {
       await apiFetch("/analytics/department-risk")
     );
 
-    // Phishing campaigns
     setCache(
       "phishing_campaigns",
       await apiFetch("/phishing/campaigns")
     );
 
+    emit();
+
   } catch (err) {
-    console.error("Live cache refresh failed:", err);
+    console.error("Cache refresh failed:", err);
   }
+}
+
+/* ======================================================
+   WEBSOCKET MODE
+====================================================== */
+
+function connectWebSocket() {
+  try {
+    ws = new WebSocket("wss://cysec-backend.onrender.com/ws/live");
+
+    ws.onopen = () => {
+      console.log("Live WS connected");
+    };
+
+    ws.onmessage = (msg) => {
+      try {
+        const data = JSON.parse(msg.data);
+
+        // expected format:
+        // { key: "dashboard_summary", payload: {...} }
+
+        if (data.key) {
+          setCache(data.key, data.payload);
+          emit();
+        }
+
+      } catch (err) {
+        console.error("WS message error:", err);
+      }
+    };
+
+    ws.onclose = () => {
+      console.warn("WS closed → fallback polling");
+      startPollingFallback();
+    };
+
+    ws.onerror = () => {
+      console.warn("WS error → fallback polling");
+      startPollingFallback();
+    };
+
+  } catch (err) {
+    console.warn("WebSocket failed → polling mode");
+    startPollingFallback();
+  }
+}
+
+/* ======================================================
+   FALLBACK POLLING
+====================================================== */
+
+function startPollingFallback() {
+  if (fallbackInterval) return;
+
+  refreshCache();
+
+  fallbackInterval = setInterval(
+    refreshCache,
+    POLL_INTERVAL
+  );
 }
 
 /* ======================================================
@@ -74,28 +130,20 @@ async function refreshCache() {
 
 export function startLiveEngine() {
   if (started) return;
-
   started = true;
 
-  // first load immediately
-  refreshCache().then(emit);
-
-  intervalId = setInterval(async () => {
-    await refreshCache();
-    emit();
-  }, INTERVAL);
-
-  console.log("Global live engine started");
+  connectWebSocket();
 }
 
 /* ======================================================
-   STOP ENGINE (optional future use)
+   STOP ENGINE
 ====================================================== */
 
 export function stopLiveEngine() {
-  if (!intervalId) return;
+  if (ws) ws.close();
+  if (fallbackInterval) clearInterval(fallbackInterval);
 
-  clearInterval(intervalId);
-  intervalId = null;
+  ws = null;
+  fallbackInterval = null;
   started = false;
 }
