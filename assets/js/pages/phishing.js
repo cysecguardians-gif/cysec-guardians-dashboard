@@ -1,5 +1,6 @@
 import { createPage } from "../core/page.js";
 import { getCache, subscribeCache } from "../core/cache.js";
+import { initPhishingWizard } from "./phishingWizard.js";
 
 /* ======================================================
    HELPERS
@@ -16,8 +17,8 @@ function renderCampaigns(data) {
   table.innerHTML = "";
 
   if (!Array.isArray(data) || !data.length) {
-    table.innerHTML =
-      `<tr>
+    table.innerHTML = `
+      <tr>
         <td colspan="3" class="text-center">
           No campaigns found
         </td>
@@ -57,10 +58,17 @@ createPage(() => {
   // initial render
   loadCampaignsFromCache();
 
-  // live cache updates
-  subscribeCache(
+  // wizard init (runs once)
+  initPhishingWizard();
+
+  // live updates subscription
+  const unsubscribe = subscribeCache(
     "phishing_campaigns",
     loadCampaignsFromCache
   );
 
+  // cleanup (important for enterprise architecture)
+  return () => {
+    unsubscribe();
+  };
 });
