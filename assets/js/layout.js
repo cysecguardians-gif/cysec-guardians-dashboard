@@ -1,9 +1,5 @@
 import { PAGE_CONFIG } from "./core/pageConfig.js";
-import { getState } from "./core/state.js";
-
-/* ===============================
-   Helpers
-=============================== */
+import { subscribe, getState } from "./core/state.js";
 
 function getCurrentPage() {
   return window.location.pathname.split("/").pop();
@@ -20,28 +16,7 @@ function setActiveNav(navPath) {
   if (active) active.classList.add("active");
 }
 
-function setPageTitle(title) {
-  const headerTitle = document.querySelector("header h5");
-  if (headerTitle) headerTitle.textContent = title;
-  document.title = title;
-}
-
-/* ===============================
-   Layout Init
-=============================== */
-
-function initLayout() {
-  const page = getCurrentPage();
-  const config = PAGE_CONFIG[page];
-
-  if (config) {
-    setActiveNav(config.nav);
-    setPageTitle(config.title);
-  }
-
-  // 🔥 USE GLOBAL STATE
-  const { user } = getState();
-
+function applyPermissions(user) {
   if (!user) return;
 
   if (!user.training_enabled) {
@@ -53,6 +28,24 @@ function initLayout() {
     document.querySelectorAll("#menu-phishing")
       .forEach(e => e.style.display = "none");
   }
+}
+
+function initLayout() {
+  const page = getCurrentPage();
+  const config = PAGE_CONFIG[page];
+
+  if (config) {
+    setActiveNav(config.nav);
+    document.title = config.title;
+  }
+
+  // 🔥 REACTIVE SUBSCRIPTION
+  subscribe(({ user }) => {
+    applyPermissions(user);
+  });
+
+  // initial run
+  applyPermissions(getState().user);
 }
 
 window.logout = function () {
