@@ -1,6 +1,5 @@
-import { apiFetch } from "../core/api.js";
 import { createPage } from "../core/page.js";
-import { onLiveUpdate } from "../core/live.js";
+import { getCache, subscribeCache } from "../core/cache.js";
 
 /* ======================================================
    HELPERS
@@ -9,24 +8,6 @@ import { onLiveUpdate } from "../core/live.js";
 function setText(id, value) {
   const el = document.getElementById(id);
   if (el) el.textContent = value ?? "--";
-}
-
-function safeArray(data) {
-  return Array.isArray(data) ? data : [];
-}
-
-/* ======================================================
-   KPI LOADERS
-====================================================== */
-
-async function loadKPIs() {
-  const data = await apiFetch("/dashboard/summary");
-
-  setText("kpi-total-users", data.total_users);
-  setText("kpi-compliant-users", data.compliant_users);
-  setText("kpi-pending-training", data.pending_training);
-  setText("kpi-failed-phishing", data.failed_phishing);
-  setText("kpi-awareness-score", data.awareness_score);
 }
 
 /* ======================================================
@@ -82,22 +63,27 @@ function createDepartmentRiskChart(labels = [], values = []) {
 }
 
 /* ======================================================
-   ANALYTICS LOADERS
+   LOAD FROM CACHE
 ====================================================== */
 
-async function loadAnalytics() {
+function loadKPIsFromCache() {
+  const data = getCache("dashboard_summary");
+  if (!data) return;
 
-  const trend = safeArray(
-    await apiFetch("/analytics/phishing-trend")
-  );
+  setText("kpi-total-users", data.total_users);
+  setText("kpi-compliant-users", data.compliant_users);
+  setText("kpi-pending-training", data.pending_training);
+  setText("kpi-failed-phishing", data.failed_phishing);
+  setText("kpi-awareness-score", data.awareness_score);
+}
+
+function loadAnalyticsFromCache() {
+  const trend = getCache("phishing_trend") || [];
+  const dept = getCache("department_risk") || [];
 
   createPhishingTrendChart(
     trend.map(i => i.date),
     trend.map(i => i.value)
-  );
-
-  const dept = safeArray(
-    await apiFetch("/analytics/department-risk")
   );
 
   createDepartmentRiskChart(
@@ -107,32 +93,18 @@ async function loadAnalytics() {
 }
 
 /* ======================================================
-   MAIN DASHBOARD LOAD
-====================================================== */
-
-async function loadDashboard() {
-  try {
-    await Promise.all([
-      loadKPIs(),
-      loadAnalytics()
-    ]);
-  } catch (err) {
-    console.error("Dashboard load failed:", err);
-  }
-}
-
-/* ======================================================
-   UNIVERSAL PAGE INIT
+   PAGE INIT
 ====================================================== */
 
 createPage(() => {
 
-  // Initial load
-  loadDashboard();
+  // initial load from cache
+  loadKPIsFromCache();
+  loadAnalyticsFromCache();
 
-  // ⭐ Global live engine updates
-  onLiveUpdate(() => {
-    loadDashboard();
-  });
+  // reactive cache updates
+  subscribeCache("dashboard_summary", loadKPIsFromCache);
+  subscribeCache("phishing_trend", loadAnalyticsFromCache);
+  subscribeCache("department_risk", loadAnalyticsFromCache);
 
 });
