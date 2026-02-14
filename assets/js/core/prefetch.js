@@ -50,7 +50,7 @@ async function prefetchItem({ key, url }) {
    PREFETCH PAGE DATA
 ====================================================== */
 
-function prefetchForPath(path) {
+export function prefetchForPath(path) {
   const items = PREFETCH_MAP[path];
   if (!items) return;
 
