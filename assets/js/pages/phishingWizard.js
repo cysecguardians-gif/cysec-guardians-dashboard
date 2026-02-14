@@ -2,6 +2,8 @@
 // Intelligent Wizard Engine (KnowBe4-style)
 
 import { showToast } from "../core/ui.js";
+import { getCache } from "../core/cache.js";
+
 
 /* ======================================================
    ELEMENTS
