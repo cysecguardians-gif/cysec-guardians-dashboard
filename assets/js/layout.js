@@ -1,14 +1,69 @@
-// layout.js
-import { apiFetch } from "/assets/js/api.js";
+import { apiFetch } from "./core/api.js";
+import { PAGE_CONFIG } from "./core/pageConfig.js";
 
 /* ===============================
-   Auth Guard
+   Helpers
 =============================== */
 
-function requireAuth() {
-  const token = localStorage.getItem("auth_token");
-  if (!token) {
-    window.location.href = "/login.html";
+function getCurrentPage() {
+  return window.location.pathname.split("/").pop();
+}
+
+/* ===============================
+   Sidebar Active Auto Highlight
+=============================== */
+
+function setActiveNav(navPath) {
+  document.querySelectorAll(".sidebar-nav .nav-link")
+    .forEach(link => link.classList.remove("active"));
+
+  const active = document.querySelector(
+    `.sidebar-nav a[href="${navPath}"]`
+  );
+
+  if (active) active.classList.add("active");
+}
+
+/* ===============================
+   Page Title Auto Update
+=============================== */
+
+function setPageTitle(title) {
+  const headerTitle = document.querySelector("header h5");
+  if (headerTitle) headerTitle.textContent = title;
+
+  document.title = title;
+}
+
+/* ===============================
+   Init Layout
+=============================== */
+
+async function initLayout() {
+  try {
+    const page = getCurrentPage();
+    const config = PAGE_CONFIG[page];
+
+    if (config) {
+      setActiveNav(config.nav);
+      setPageTitle(config.title);
+    }
+
+    // User permissions
+    const me = await apiFetch("/me");
+
+    if (!me.training_enabled) {
+      document.querySelectorAll("#menu-training")
+        .forEach(e => e.style.display = "none");
+    }
+
+    if (!me.phishing_enabled) {
+      document.querySelectorAll("#menu-phishing")
+        .forEach(e => e.style.display = "none");
+    }
+
+  } catch (err) {
+    console.error("Layout error:", err);
   }
 }
 
@@ -16,55 +71,9 @@ function requireAuth() {
    Logout
 =============================== */
 
-export function logout() {
+window.logout = function () {
   localStorage.clear();
   window.location.href = "/login.html";
-}
-
-window.logout = logout;
-
-/* ===============================
-   Layout Init
-=============================== */
-
-async function initLayout() {
-  try {
-    requireAuth();
-
-    const me = await apiFetch("/me");
-
-    const sidebar = document.getElementById("sidebar");
-    if (!sidebar) return;
-
-    sidebar.style.visibility = "hidden";
-
-    // Training menu
-    if (!me.training_enabled) {
-      document.querySelectorAll("#menu-training")
-        .forEach(e => e.style.display = "none");
-    }
-
-    // Phishing menu
-    if (!me.phishing_enabled) {
-      document.querySelectorAll("#menu-phishing")
-        .forEach(e => e.style.display = "none");
-    }
-
-    // Admin only
-    if (me.role !== "admin") {
-      document.querySelectorAll(".admin-only")
-        .forEach(e => e.style.display = "none");
-    }
-
-    setTimeout(() => {
-      sidebar.style.visibility = "visible";
-      window.dispatchEvent(new Event("resize"));
-    }, 50);
-
-  } catch (err) {
-    console.error("Layout init failed", err);
-    logout();
-  }
-}
+};
 
 document.addEventListener("DOMContentLoaded", initLayout);
