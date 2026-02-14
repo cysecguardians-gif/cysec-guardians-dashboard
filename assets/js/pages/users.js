@@ -1,5 +1,5 @@
 import { apiFetch } from "/assets/js/api.js";
-
+import { getState } from "../core/state.js";
 const table = document.getElementById("usersTable");
 
 function renderUsers(users) {
