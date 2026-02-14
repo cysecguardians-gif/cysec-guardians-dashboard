@@ -1,5 +1,5 @@
 // phishingWizard.js
-// Intelligent + Risk-Aware Wizard Engine
+// Intelligent + Risk-Aware + Autonomous Wizard Engine
 
 import { showToast } from "../core/ui.js";
 import { getCache } from "../core/cache.js";
@@ -32,7 +32,9 @@ const campaignDraft = {
   targets: null,
   template: null,
   domain: null,
-  schedule: null
+  schedule: null,
+  followupTraining: null,
+  recommendations: []
 };
 
 /* ======================================================
@@ -55,6 +57,60 @@ function getRiskLevel(score) {
   if (score >= 70) return "HIGH";
   if (score >= 40) return "MEDIUM";
   return "LOW";
+}
+
+/* ======================================================
+   AUTONOMOUS RECOMMENDATION ENGINE
+====================================================== */
+
+function applyAutonomousRecommendations() {
+
+  const recommendations = [];
+
+  // Goal-based automation
+  if (campaignDraft.goal === "invoice") {
+    campaignDraft.schedule = "random_3_days";
+    recommendations.push(
+      "Randomized delivery over 3 days recommended."
+    );
+  }
+
+  if (campaignDraft.goal === "credential") {
+    campaignDraft.schedule = "high_realism";
+    recommendations.push(
+      "High-realism delivery enabled."
+    );
+  }
+
+  if (campaignDraft.goal === "hr") {
+    campaignDraft.schedule = "normal_delivery";
+  }
+
+  // Risk-based automation
+  const score =
+    getDepartmentRisk(campaignDraft.targets);
+
+  const level = getRiskLevel(score);
+
+  if (level === "HIGH") {
+    campaignDraft.followupTraining =
+      "advanced_phishing_training";
+
+    recommendations.push(
+      "Follow-up training auto-suggested for high-risk users."
+    );
+  }
+
+  if (level === "MEDIUM") {
+    campaignDraft.followupTraining =
+      "standard_awareness_training";
+
+    recommendations.push(
+      "Standard awareness training suggested."
+    );
+  }
+
+  return recommendations;
 }
 
 /* ======================================================
@@ -257,19 +313,17 @@ function applyRiskIntelligence(dept) {
   if (!riskHint) return;
 
   let alertType = "success";
-  let message = `Low risk department.`;
+  let message = "Low risk department.";
 
   if (level === "HIGH") {
     alertType = "danger";
-    message =
-      `⚠ ${dept} is HIGH risk. Recommended advanced template.`;
+    message = `⚠ ${dept} is HIGH risk. Recommended advanced template.`;
     campaignDraft.template = "high_risk_template";
   }
 
   if (level === "MEDIUM") {
     alertType = "warning";
-    message =
-      `⚠ ${dept} has MEDIUM risk. Recommended realistic simulation.`;
+    message = `⚠ ${dept} has MEDIUM risk. Recommended realistic simulation.`;
     campaignDraft.template = "medium_risk_template";
   }
 
@@ -282,6 +336,10 @@ function applyRiskIntelligence(dept) {
       ${message}
     </div>
   `;
+
+  // 🔥 autonomous intelligence
+  campaignDraft.recommendations =
+    applyAutonomousRecommendations();
 }
 
 /* ======================================================
@@ -332,14 +390,30 @@ function renderScheduleStep() {
 
 function renderReviewStep() {
 
+  const recs = campaignDraft.recommendations || [];
+
   stepContainer.innerHTML = `
     <h5>Step 6 — Review</h5>
 
     <div class="alert alert-info">
       <strong>Goal:</strong> ${campaignDraft.goal || "--"}<br>
       <strong>Targets:</strong> ${campaignDraft.targets || "--"}<br>
-      <strong>Template:</strong> ${campaignDraft.template || "--"}
+      <strong>Template:</strong> ${campaignDraft.template || "--"}<br>
+      <strong>Schedule:</strong> ${campaignDraft.schedule || "--"}
     </div>
+
+    ${
+      recs.length
+        ? `
+        <div class="alert alert-warning">
+          <strong>System Recommendations:</strong>
+          <ul class="mb-0">
+            ${recs.map(r => `<li>${r}</li>`).join("")}
+          </ul>
+        </div>
+        `
+        : ""
+    }
   `;
 }
 
@@ -370,5 +444,5 @@ btnBack?.addEventListener("click", prevStep);
 ====================================================== */
 
 export function initPhishingWizard() {
-  console.log("Risk-aware wizard ready");
+  console.log("Autonomous risk-aware wizard ready");
 }
