@@ -2,6 +2,7 @@ import { loadAppState } from "./state.js";
 import { startLiveEngine } from "./live.js";
 import { startPrefetchEngine } from "./prefetch.js";
 import { startNavigationAI } from "./navigationAI.js";
+import { initObservabilityUI } from "./observability.js";
 
 async function bootstrap() {
   try {
@@ -9,9 +10,9 @@ async function bootstrap() {
 
     startLiveEngine();
     startPrefetchEngine();
-
-    // ⭐ NEW
     startNavigationAI();
+
+    initObservabilityUI();
 
     console.log("App bootstrapped");
 
