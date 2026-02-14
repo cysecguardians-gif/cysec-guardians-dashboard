@@ -1,34 +1,60 @@
-import { apiFetch } from "/assets/js/core/api.js";
-import { getState } from "../core/state.js";
-const table = document.getElementById("campaignTable");
+import { apiFetch } from "../core/api.js";
+import { createPage } from "../core/page.js";
+
+/* ======================================================
+   HELPERS
+====================================================== */
+
+function getTable() {
+  return document.getElementById("campaignTable");
+}
 
 function renderCampaigns(data) {
+  const table = getTable();
+  if (!table) return;
+
   table.innerHTML = "";
 
-  if (!data.length) {
+  if (!Array.isArray(data) || !data.length) {
     table.innerHTML =
-      `<tr><td colspan="3" class="text-center">No campaigns found</td></tr>`;
+      `<tr>
+        <td colspan="3" class="text-center">
+          No campaigns found
+        </td>
+      </tr>`;
     return;
   }
 
   data.forEach(c => {
-    table.innerHTML += `
-      <tr>
-        <td>${c.name}</td>
-        <td>${c.status}</td>
-        <td>${c.launch_date || ""}</td>
-      </tr>
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+      <td>${c.name || ""}</td>
+      <td>${c.status || ""}</td>
+      <td>${c.launch_date || ""}</td>
     `;
+
+    table.appendChild(row);
   });
 }
+
+/* ======================================================
+   LOADERS
+====================================================== */
 
 async function loadCampaigns() {
   try {
     const data = await apiFetch("/phishing/campaigns");
     renderCampaigns(data);
   } catch (err) {
-    console.error(err);
+    console.error("Failed loading campaigns:", err);
   }
 }
 
-loadCampaigns();
+/* ======================================================
+   UNIVERSAL PAGE INIT
+====================================================== */
+
+createPage(() => {
+  loadCampaigns();
+});
