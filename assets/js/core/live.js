@@ -1,16 +1,22 @@
-// live.js
-// WebSocket-ready Live Engine
-
 import { apiFetch } from "./api.js";
 import { setCache } from "./cache.js";
+import { onVisibilityChange } from "./scheduler.js";
 
 const listeners = new Set();
 
-let started = false;
 let ws = null;
-let fallbackInterval = null;
+let pollTimer = null;
 
-const POLL_INTERVAL = 60000;
+let started = false;
+
+/* ======================================================
+   INTERVALS
+====================================================== */
+
+const FAST_INTERVAL = 30000;   // active tab
+const SLOW_INTERVAL = 180000;  // hidden tab (3 mins)
+
+let currentInterval = FAST_INTERVAL;
 
 /* ======================================================
    PUBLIC SUBSCRIBE
@@ -32,7 +38,7 @@ function emit() {
 }
 
 /* ======================================================
-   CACHE REFRESH (fallback polling)
+   CACHE REFRESH
 ====================================================== */
 
 async function refreshCache() {
@@ -60,8 +66,33 @@ async function refreshCache() {
     emit();
 
   } catch (err) {
-    console.error("Cache refresh failed:", err);
+    console.error("Live refresh failed:", err);
   }
+}
+
+/* ======================================================
+   POLLING MODE
+====================================================== */
+
+function restartPolling(interval) {
+
+  currentInterval = interval;
+
+  if (pollTimer) {
+    clearInterval(pollTimer);
+  }
+
+  refreshCache();
+
+  pollTimer = setInterval(
+    refreshCache,
+    currentInterval
+  );
+
+  console.log(
+    "Live polling interval:",
+    currentInterval
+  );
 }
 
 /* ======================================================
@@ -69,19 +100,19 @@ async function refreshCache() {
 ====================================================== */
 
 function connectWebSocket() {
+
   try {
-    ws = new WebSocket("wss://cysec-backend.onrender.com/ws/live");
+    ws = new WebSocket(
+      "wss://cysec-backend.onrender.com/ws/live"
+    );
 
     ws.onopen = () => {
-      console.log("Live WS connected");
+      console.log("WebSocket connected");
     };
 
     ws.onmessage = (msg) => {
       try {
         const data = JSON.parse(msg.data);
-
-        // expected format:
-        // { key: "dashboard_summary", payload: {...} }
 
         if (data.key) {
           setCache(data.key, data.payload);
@@ -89,39 +120,44 @@ function connectWebSocket() {
         }
 
       } catch (err) {
-        console.error("WS message error:", err);
+        console.error("WS parse error", err);
       }
     };
 
     ws.onclose = () => {
-      console.warn("WS closed → fallback polling");
-      startPollingFallback();
+      console.warn("WS closed → polling fallback");
+      restartPolling(FAST_INTERVAL);
     };
 
     ws.onerror = () => {
-      console.warn("WS error → fallback polling");
-      startPollingFallback();
+      console.warn("WS error → polling fallback");
+      restartPolling(FAST_INTERVAL);
     };
 
-  } catch (err) {
-    console.warn("WebSocket failed → polling mode");
-    startPollingFallback();
+  } catch {
+    restartPolling(FAST_INTERVAL);
   }
 }
 
 /* ======================================================
-   FALLBACK POLLING
+   ADAPTIVE BEHAVIOR
 ====================================================== */
 
-function startPollingFallback() {
-  if (fallbackInterval) return;
+function setupAdaptiveScheduling() {
 
-  refreshCache();
+  onVisibilityChange((visible) => {
 
-  fallbackInterval = setInterval(
-    refreshCache,
-    POLL_INTERVAL
-  );
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      // websocket already efficient
+      return;
+    }
+
+    if (visible) {
+      restartPolling(FAST_INTERVAL);
+    } else {
+      restartPolling(SLOW_INTERVAL);
+    }
+  });
 }
 
 /* ======================================================
@@ -130,9 +166,13 @@ function startPollingFallback() {
 
 export function startLiveEngine() {
   if (started) return;
+
   started = true;
 
   connectWebSocket();
+  setupAdaptiveScheduling();
+
+  console.log("Adaptive Live Engine started");
 }
 
 /* ======================================================
@@ -141,9 +181,9 @@ export function startLiveEngine() {
 
 export function stopLiveEngine() {
   if (ws) ws.close();
-  if (fallbackInterval) clearInterval(fallbackInterval);
+  if (pollTimer) clearInterval(pollTimer);
 
   ws = null;
-  fallbackInterval = null;
+  pollTimer = null;
   started = false;
 }
