@@ -1,6 +1,5 @@
-import { apiFetch } from "../core/api.js";
 import { createPage } from "../core/page.js";
-import { onLiveUpdate } from "../core/live.js";
+import { getCache, subscribeCache } from "../core/cache.js";
 
 /* ======================================================
    HELPERS
@@ -40,30 +39,28 @@ function renderCampaigns(data) {
 }
 
 /* ======================================================
-   LOADERS
+   LOAD FROM CACHE
 ====================================================== */
 
-async function loadCampaigns() {
-  try {
-    const data = await apiFetch("/phishing/campaigns");
-    renderCampaigns(data);
-  } catch (err) {
-    console.error("Failed loading campaigns:", err);
-  }
+function loadCampaignsFromCache() {
+  renderCampaigns(
+    getCache("phishing_campaigns") || []
+  );
 }
 
 /* ======================================================
-   UNIVERSAL PAGE INIT
+   PAGE INIT
 ====================================================== */
 
 createPage(() => {
 
-  // Initial load
-  loadCampaigns();
+  // initial render
+  loadCampaignsFromCache();
 
-  // ⭐ Global live updates
-  onLiveUpdate(() => {
-    loadCampaigns();
-  });
+  // live cache updates
+  subscribeCache(
+    "phishing_campaigns",
+    loadCampaignsFromCache
+  );
 
 });
