@@ -8,9 +8,9 @@ async function bootstrap() {
   try {
     await loadAppState();
 
-    startLiveEngine();
-    startPrefetchEngine();
-    startNavigationAI();
+    //startLiveEngine();
+    //startPrefetchEngine();
+    //startNavigationAI();
 
     initObservabilityUI();
 
