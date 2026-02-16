@@ -3,7 +3,7 @@ import { getCache, subscribeCache } from "../core/cache.js";
 import { initPhishingWizard } from "./phishingWizard.js";
 
 /* ======================================================
-   HELPERS
+   TABLE RENDER
 ====================================================== */
 
 function getTable() {
@@ -16,59 +16,76 @@ function renderCampaigns(data) {
 
   table.innerHTML = "";
 
-  if (!Array.isArray(data) || !data.length) {
-    table.innerHTML = `
-      <tr>
-        <td colspan="3" class="text-center">
-          No campaigns found
-        </td>
-      </tr>`;
+  if (!data?.length) {
+    table.innerHTML =
+      `<tr><td colspan="3" class="text-center">
+        No campaigns found
+      </td></tr>`;
     return;
   }
 
   data.forEach(c => {
-    const row = document.createElement("tr");
-
-    row.innerHTML = `
-      <td>${c.name || ""}</td>
-      <td>${c.status || ""}</td>
-      <td>${c.launch_date || ""}</td>
+    table.innerHTML += `
+      <tr>
+        <td>${c.name}</td>
+        <td>${c.status}</td>
+        <td>${c.launch_date || ""}</td>
+      </tr>
     `;
-
-    table.appendChild(row);
   });
 }
 
 /* ======================================================
-   LOAD FROM CACHE
+   BUTTON ACTIONS (NEW)
 ====================================================== */
 
-function loadCampaignsFromCache() {
-  renderCampaigns(
-    getCache("phishing_campaigns") || []
-  );
+function bindButtons() {
+
+  document
+    .getElementById("manageTemplatesBtn")
+    ?.addEventListener("click", () => {
+      window.open(
+        "https://34.135.161.255:3333/templates",
+        "_blank"
+      );
+    });
+
+  document
+    .getElementById("createTemplateBtn")
+    ?.addEventListener("click", () => {
+      window.open(
+        "https://34.135.161.255:3333/templates",
+        "_blank"
+      );
+    });
+
+  document
+    .getElementById("manageDomainsBtn")
+    ?.addEventListener("click", () => {
+      window.open(
+        "https://34.135.161.255:3333",
+        "_blank"
+      );
+    });
+
+  document
+    .getElementById("createCampaignBtn")
+    ?.addEventListener("click", () => {
+      initPhishingWizard();
+    });
 }
 
 /* ======================================================
-   PAGE INIT
+   INIT
 ====================================================== */
 
+function loadFromCache() {
+  renderCampaigns(getCache("phishing_campaigns") || []);
+}
+
 createPage(() => {
+  loadFromCache();
+  subscribeCache("phishing_campaigns", loadFromCache);
 
-  // initial render
-  loadCampaignsFromCache();
-
-  // wizard init (runs once)
-  initPhishingWizard();
-
-  // live updates subscription
-  const unsubscribe = subscribeCache(
-    "phishing_campaigns",
-    loadCampaignsFromCache
-  );
-
-  // cleanup (important for enterprise architecture)
-  return () => {
-    unsubscribe();
-  };
+  bindButtons();
 });
