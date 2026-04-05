@@ -6,6 +6,7 @@ import { setCache } from "./cache.js";
 import { onVisibilityChange } from "./scheduler.js";
 import { LIVE_PRIORITY } from "./livePriority.js";
 import { logEvent } from "./observability.js";
+import { getState } from "./state.js"; // 🔥 NEW
 
 /* ======================================================
    INTERNAL STATE
@@ -21,9 +22,9 @@ let timers = {};
 ====================================================== */
 
 const INTERVALS = {
-  HIGH: 15000,   // 15s (critical data)
-  MEDIUM: 60000, // 1 min
-  LOW: 180000    // 3 min
+  HIGH: 15000,
+  MEDIUM: 60000,
+  LOW: 180000
 };
 
 const HIDDEN_MULTIPLIER = 3;
@@ -52,10 +53,25 @@ function emit() {
 }
 
 /* ======================================================
+   CHECK STATE READY
+====================================================== */
+
+function isReady() {
+  const state = getState();
+  return !!state?.org?.id;
+}
+
+/* ======================================================
    FETCH GROUP DATA
 ====================================================== */
 
 async function refreshGroup(group) {
+
+  // 🔥 BLOCK until org_id is ready
+  if (!isReady()) {
+    console.warn(`Skipping ${group} refresh (org not ready)`);
+    return;
+  }
 
   const items = LIVE_PRIORITY[group];
   if (!items?.length) return;
@@ -87,13 +103,12 @@ async function refreshGroup(group) {
 
 function startGroup(group, interval) {
 
-  // clear old timer if exists
   if (timers[group]) {
     clearInterval(timers[group]);
   }
 
-  // immediate refresh once
-  refreshGroup(group);
+  // 🔥 delay initial run slightly (gives state time)
+  setTimeout(() => refreshGroup(group), 300);
 
   timers[group] = setInterval(() => {
     refreshGroup(group);
