@@ -4,12 +4,12 @@
 import { apiFetch } from "./api.js";
 import { setCache, getCache } from "./cache.js";
 import { logEvent } from "./observability.js";
+import { getState } from "./state.js"; // 🔥 NEW
 
 let started = false;
 
 /* ======================================================
    PREFETCH MAP
-   (Data expected per page)
 ====================================================== */
 
 const PREFETCH_MAP = {
@@ -32,14 +32,28 @@ const PREFETCH_MAP = {
 };
 
 /* ======================================================
+   STATE CHECK
+====================================================== */
+
+function isReady() {
+  const state = getState();
+  return !!state?.org?.id;
+}
+
+/* ======================================================
    PREFETCH SINGLE ITEM
 ====================================================== */
 
 async function prefetchItem({ key, url }) {
 
+  // 🔥 BLOCK until org_id is ready
+  if (!isReady()) {
+    console.warn(`Skipping prefetch (${key}) — org not ready`);
+    return;
+  }
+
   try {
 
-    // skip if already cached
     if (getCache(key)) return;
 
     const data = await apiFetch(url);
@@ -97,6 +111,12 @@ function idlePrefetch() {
   if (!("requestIdleCallback" in window)) return;
 
   requestIdleCallback(() => {
+
+    // 🔥 Wait until state is ready
+    if (!isReady()) {
+      console.warn("Skipping idle prefetch — org not ready");
+      return;
+    }
 
     logEvent("PREFETCH", "Idle prefetch started");
 
