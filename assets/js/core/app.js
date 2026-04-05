@@ -155,27 +155,38 @@ function initPhishingUI() {
   // STEP 1 — GOAL SELECTION
   // ===============================
 
-  document.querySelectorAll("#wizardStepContainer button")
-    .forEach(btn => {
+  const goalButtons = document.querySelectorAll("#wizardStepContainer button");
 
-      btn.addEventListener("click", () => {
+goalButtons.forEach(btn => {
 
-        const text = btn.innerText;
+  btn.addEventListener("click", () => {
 
-        if (text.includes("Invoice")) {
-          campaignDraft.template = "invoice_template";
-        } else if (text.includes("Credential")) {
-          campaignDraft.template = "login_template";
-        } else {
-          campaignDraft.template = "hr_template";
-        }
-
-        campaignDraft.goal = text;
-
-        console.log("Selected goal:", campaignDraft);
-      });
-
+    // 🔥 Remove selection from all
+    goalButtons.forEach(b => {
+      b.classList.remove("btn-primary");
+      b.classList.add("btn-outline-primary");
     });
+
+    // 🔥 Highlight selected
+    btn.classList.remove("btn-outline-primary");
+    btn.classList.add("btn-primary");
+
+    const text = btn.innerText.trim();
+
+    if (text.includes("Invoice")) {
+      campaignDraft.template = "invoice_template";
+    } else if (text.includes("Credential")) {
+      campaignDraft.template = "login_template";
+    } else {
+      campaignDraft.template = "hr_template";
+    }
+
+    campaignDraft.goal = text;
+
+    console.log("✅ Selected:", campaignDraft);
+  });
+
+});
 
   // ===============================
   // LAUNCH CAMPAIGN
