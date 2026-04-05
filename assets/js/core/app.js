@@ -83,13 +83,8 @@ async function loadDashboard() {
 }
 
 /* ===============================
-   PHISHING PAGE LOGIC
+   PHISHING PAGE LOGIC (FINAL)
 =============================== */
-
-let campaignDraft = {
-  goal: null,
-  template: null
-};
 
 function initPhishingUI() {
 
@@ -102,10 +97,20 @@ function initPhishingUI() {
   const createBtn = document.getElementById("createCampaignBtn");
   const cancelBtn = document.getElementById("cancelWizardBtn");
   const nextBtn = document.getElementById("wizardNextBtn");
+  const backBtn = document.getElementById("wizardBackBtn");
 
-  // ===============================
-  // LOAD CAMPAIGNS
-  // ===============================
+  const stepContainer = document.getElementById("wizardStepContainer");
+
+  let currentStep = 1;
+
+  let campaignDraft = {
+    goal: null,
+    template: null
+  };
+
+  /* ===============================
+     LOAD CAMPAIGNS
+  =============================== */
 
   async function loadCampaigns() {
     try {
@@ -137,101 +142,195 @@ function initPhishingUI() {
 
   loadCampaigns();
 
-  // ===============================
-  // OPEN / CLOSE WIZARD
-  // ===============================
+  /* ===============================
+     RESET WIZARD
+  =============================== */
+
+  function resetWizard() {
+    wizardView.classList.add("d-none");
+    homeView.classList.remove("d-none");
+
+    currentStep = 1;
+    campaignDraft = { goal: null, template: null };
+
+    nextBtn.textContent = "Next Step";
+
+    renderStep1();
+  }
+
+  /* ===============================
+     VIEW SWITCH
+  =============================== */
 
   createBtn.addEventListener("click", () => {
     homeView.classList.add("d-none");
     wizardView.classList.remove("d-none");
   });
 
-  cancelBtn.addEventListener("click", () => {
-    wizardView.classList.add("d-none");
-    homeView.classList.remove("d-none");
-  });
+  cancelBtn.addEventListener("click", resetWizard);
 
-  // ===============================
-  // STEP 1 — GOAL SELECTION
-  // ===============================
+  /* ===============================
+     STEP 1
+  =============================== */
 
-  const goalButtons = document.querySelectorAll("#wizardStepContainer button");
+  function renderStep1() {
+    backBtn.disabled = true;
 
-goalButtons.forEach(btn => {
+    stepContainer.innerHTML = `
+      <h5>Step 1 — Campaign Goal</h5>
+      <p class="text-muted">Select phishing scenario</p>
 
-  btn.addEventListener("click", () => {
+      <div class="row g-3">
+        <div class="col-md-4">
+          <button class="btn btn-outline-primary w-100">Invoice Fraud</button>
+        </div>
+        <div class="col-md-4">
+          <button class="btn btn-outline-primary w-100">Credential Theft</button>
+        </div>
+        <div class="col-md-4">
+          <button class="btn btn-outline-primary w-100">HR / Payroll</button>
+        </div>
+      </div>
+    `;
 
-    // 🔥 Remove selection from all
-    goalButtons.forEach(b => {
-      b.classList.remove("btn-primary");
-      b.classList.add("btn-outline-primary");
+    const buttons = stepContainer.querySelectorAll("button");
+
+    buttons.forEach(btn => {
+      btn.addEventListener("click", () => {
+
+        buttons.forEach(b => {
+          b.classList.remove("btn-primary");
+          b.classList.add("btn-outline-primary");
+        });
+
+        btn.classList.remove("btn-outline-primary");
+        btn.classList.add("btn-primary");
+
+        const text = btn.innerText.trim();
+
+        if (text.includes("Invoice")) {
+          campaignDraft.template = "invoice_template";
+        } else if (text.includes("Credential")) {
+          campaignDraft.template = "login_template";
+        } else {
+          campaignDraft.template = "hr_template";
+        }
+
+        campaignDraft.goal = text;
+      });
     });
+  }
 
-    // 🔥 Highlight selected
-    btn.classList.remove("btn-outline-primary");
-    btn.classList.add("btn-primary");
+  /* ===============================
+     STEP 2
+  =============================== */
 
-    const text = btn.innerText.trim();
+  function renderStep2() {
+    backBtn.disabled = false;
 
-    if (text.includes("Invoice")) {
-      campaignDraft.template = "invoice_template";
-    } else if (text.includes("Credential")) {
-      campaignDraft.template = "login_template";
-    } else {
-      campaignDraft.template = "hr_template";
-    }
+    stepContainer.innerHTML = `
+      <h5>Step 2 — Targets</h5>
+      <p class="text-muted">All users will be targeted (MVP)</p>
 
-    campaignDraft.goal = text;
+      <div class="alert alert-info">
+        All organization users will receive this campaign.
+      </div>
+    `;
+  }
 
-    console.log("✅ Selected:", campaignDraft);
-  });
+  /* ===============================
+     STEP 3
+  =============================== */
 
-});
+  function renderStep3() {
+    backBtn.disabled = false;
 
-  // ===============================
-  // LAUNCH CAMPAIGN
-  // ===============================
+    stepContainer.innerHTML = `
+      <h5>Step 3 — Review</h5>
+
+      <div class="card p-3">
+        <p><strong>Goal:</strong> ${campaignDraft.goal}</p>
+        <p><strong>Template:</strong> ${campaignDraft.template}</p>
+        <p><strong>Targets:</strong> All Users</p>
+      </div>
+    `;
+
+    nextBtn.textContent = "Launch Campaign 🚀";
+  }
+
+  /* ===============================
+     NEXT BUTTON
+  =============================== */
 
   nextBtn.addEventListener("click", async () => {
 
-    if (!campaignDraft.template) {
-      alert("Please select a goal first");
+    if (currentStep === 1) {
+      if (!campaignDraft.template) {
+        alert("Please select a goal first");
+        return;
+      }
+      renderStep2();
+      currentStep = 2;
       return;
     }
 
-    try {
+    if (currentStep === 2) {
+      renderStep3();
+      currentStep = 3;
+      return;
+    }
 
-      const stateModule = await import("./state.js");
-      const state = stateModule.getState();
+    if (currentStep === 3) {
+      try {
 
-      const payload = {
-        template: campaignDraft.template,
-        goal: campaignDraft.goal,
-        org_id: state.org.id,
-        created_by: state.user.email
-      };
+        const stateModule = await import("./state.js");
+        const state = stateModule.getState();
 
-      await apiFetch("/phishing/campaign", {
-        method: "POST",
-        body: JSON.stringify(payload)
-      });
+        const payload = {
+          template: campaignDraft.template,
+          goal: campaignDraft.goal,
+          org_id: state.org.id,
+          created_by: state.user.email
+        };
 
-      alert("Campaign launched successfully!");
+        await apiFetch("/phishing/campaign", {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
 
-      wizardView.classList.add("d-none");
-      homeView.classList.remove("d-none");
+        alert("Campaign launched successfully!");
 
-      campaignDraft = { goal: null, template: null };
+        resetWizard();
+        loadCampaigns();
 
-      loadCampaigns();
-
-    } catch (err) {
-      console.error("Campaign launch failed:", err);
-      alert("Failed to launch campaign");
+      } catch (err) {
+        console.error(err);
+        alert("Failed to launch campaign");
+      }
     }
 
   });
 
+  /* ===============================
+     BACK BUTTON
+  =============================== */
+
+  backBtn.addEventListener("click", () => {
+
+    if (currentStep === 2) {
+      renderStep1();
+      currentStep = 1;
+    }
+
+    else if (currentStep === 3) {
+      renderStep2();
+      nextBtn.textContent = "Next Step";
+      currentStep = 2;
+    }
+
+  });
+
+  renderStep1();
 }
 
 /* ===============================
@@ -250,7 +349,7 @@ async function bootstrap() {
 
     await loadUsers();
     await loadDashboard();
-    initPhishingUI(); // 🔥 IMPORTANT
+    initPhishingUI();
 
     console.log("App bootstrapped");
 
