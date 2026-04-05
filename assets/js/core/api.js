@@ -1,22 +1,17 @@
 // api.js
-// Self-Healing API Layer + Chaos Testing Support
 
 import { logEvent } from "./observability.js";
 import { applyChaos } from "./chaos.js";
-import { getState } from "./state.js"; // 🔥 NEW
-
-/* ======================================================
-   CONFIG
-====================================================== */
+import { getState } from "./state.js";
 
 const API_BASE = "https://cysec-backend.onrender.com";
 
 const MAX_RETRIES = 3;
-const BASE_DELAY = 800; // ms
+const BASE_DELAY = 800;
 
-/* ======================================================
+/* ===============================
    HELPERS
-====================================================== */
+=============================== */
 
 function getAuthHeaders() {
   const token = localStorage.getItem("auth_token");
@@ -36,30 +31,35 @@ function backoffDelay(attempt) {
   return BASE_DELAY * (2 ** attempt) + jitter;
 }
 
-/* ======================================================
-   ADD ORG ID AUTOMATICALLY
-====================================================== */
+/* ===============================
+   FORCE ORG ID INTO URL
+=============================== */
 
-function attachOrgId(path) {
+function buildUrl(path) {
   const state = getState();
   const orgId = state?.org?.id;
 
-  if (!orgId) return path;
+  let fullUrl = path.startsWith("http")
+    ? path
+    : `${API_BASE}${path}`;
 
-  // if already has query params
-  if (path.includes("?")) {
-    return `${path}&org_id=${orgId}`;
+  if (!orgId) return fullUrl;
+
+  // inject org_id safely
+  const url = new URL(fullUrl);
+
+  if (!url.searchParams.has("org_id")) {
+    url.searchParams.append("org_id", orgId);
   }
 
-  return `${path}?org_id=${orgId}`;
+  return url.toString();
 }
 
-/* ======================================================
-   CORE REQUEST WITH RETRY
-====================================================== */
+/* ===============================
+   CORE REQUEST
+=============================== */
 
 async function requestWithRetry(url, options, attempt = 0) {
-
   try {
 
     await applyChaos();
@@ -97,16 +97,15 @@ async function requestWithRetry(url, options, attempt = 0) {
   }
 }
 
-/* ======================================================
+/* ===============================
    PUBLIC API
-====================================================== */
+=============================== */
 
 export async function apiFetch(path, options = {}) {
 
-  // 🔥 AUTO ATTACH ORG ID
-  const finalPath = attachOrgId(path);
+  const url = buildUrl(path); // 🔥 FINAL FIX
 
-  const url = `${API_BASE}${finalPath}`;
+  console.log("API CALL:", url); // 🔥 DEBUG (keep temporarily)
 
   const config = {
     method: options.method || "GET",
