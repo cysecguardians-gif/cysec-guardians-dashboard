@@ -12,11 +12,9 @@ import { apiFetch } from "./api.js";
 async function loadUsers() {
   try {
     const table = document.getElementById("usersTable");
-    if (!table) return; // only run on users page
+    if (!table) return;
 
     const users = await apiFetch("/employees");
-
-    console.log("Users API response:", users);
 
     if (!users || users.length === 0) {
       table.innerHTML = `
@@ -60,11 +58,9 @@ async function loadUsers() {
 async function loadDashboard() {
   try {
     const el = document.getElementById("kpi-total-users");
-    if (!el) return; // only run on dashboard page
+    if (!el) return;
 
     const data = await apiFetch("/dashboard/summary");
-
-    console.log("Dashboard API response:", data);
 
     document.getElementById("kpi-total-users").textContent =
       data.total_users ?? "--";
@@ -87,25 +83,163 @@ async function loadDashboard() {
 }
 
 /* ===============================
+   PHISHING PAGE LOGIC
+=============================== */
+
+let campaignDraft = {
+  goal: null,
+  template: null
+};
+
+function initPhishingUI() {
+
+  const table = document.getElementById("campaignTable");
+  if (!table) return;
+
+  const homeView = document.getElementById("phishingHomeView");
+  const wizardView = document.getElementById("campaignWizardView");
+
+  const createBtn = document.getElementById("createCampaignBtn");
+  const cancelBtn = document.getElementById("cancelWizardBtn");
+  const nextBtn = document.getElementById("wizardNextBtn");
+
+  // ===============================
+  // LOAD CAMPAIGNS
+  // ===============================
+
+  async function loadCampaigns() {
+    try {
+      const campaigns = await apiFetch("/phishing/campaigns");
+
+      if (!campaigns || campaigns.length === 0) {
+        table.innerHTML = `
+          <tr>
+            <td colspan="3" class="text-center">
+              No campaigns yet
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      table.innerHTML = campaigns.map(c => `
+        <tr>
+          <td>${c.name || "-"}</td>
+          <td>${c.status || "-"}</td>
+          <td>${c.scheduled_at || "-"}</td>
+        </tr>
+      `).join("");
+
+    } catch (err) {
+      console.error("Failed to load campaigns:", err);
+    }
+  }
+
+  loadCampaigns();
+
+  // ===============================
+  // OPEN / CLOSE WIZARD
+  // ===============================
+
+  createBtn.addEventListener("click", () => {
+    homeView.classList.add("d-none");
+    wizardView.classList.remove("d-none");
+  });
+
+  cancelBtn.addEventListener("click", () => {
+    wizardView.classList.add("d-none");
+    homeView.classList.remove("d-none");
+  });
+
+  // ===============================
+  // STEP 1 — GOAL SELECTION
+  // ===============================
+
+  document.querySelectorAll("#wizardStepContainer button")
+    .forEach(btn => {
+
+      btn.addEventListener("click", () => {
+
+        const text = btn.innerText;
+
+        if (text.includes("Invoice")) {
+          campaignDraft.template = "invoice_template";
+        } else if (text.includes("Credential")) {
+          campaignDraft.template = "login_template";
+        } else {
+          campaignDraft.template = "hr_template";
+        }
+
+        campaignDraft.goal = text;
+
+        console.log("Selected goal:", campaignDraft);
+      });
+
+    });
+
+  // ===============================
+  // LAUNCH CAMPAIGN
+  // ===============================
+
+  nextBtn.addEventListener("click", async () => {
+
+    if (!campaignDraft.template) {
+      alert("Please select a goal first");
+      return;
+    }
+
+    try {
+
+      const stateModule = await import("./state.js");
+      const state = stateModule.getState();
+
+      const payload = {
+        template: campaignDraft.template,
+        goal: campaignDraft.goal,
+        org_id: state.org.id,
+        created_by: state.user.email
+      };
+
+      await apiFetch("/phishing/campaign", {
+        method: "POST",
+        body: JSON.stringify(payload)
+      });
+
+      alert("Campaign launched successfully!");
+
+      wizardView.classList.add("d-none");
+      homeView.classList.remove("d-none");
+
+      campaignDraft = { goal: null, template: null };
+
+      loadCampaigns();
+
+    } catch (err) {
+      console.error("Campaign launch failed:", err);
+      alert("Failed to launch campaign");
+    }
+
+  });
+
+}
+
+/* ===============================
    BOOTSTRAP
 =============================== */
 
 async function bootstrap() {
   try {
-    // Load user + org state first
     await loadAppState();
 
-    // Start engines
     startLiveEngine();
     startPrefetchEngine();
     startNavigationAI();
 
-    // Observability UI
     initObservabilityUI();
 
-    // Page-specific loaders
     await loadUsers();
     await loadDashboard();
+    initPhishingUI(); // 🔥 IMPORTANT
 
     console.log("App bootstrapped");
 
