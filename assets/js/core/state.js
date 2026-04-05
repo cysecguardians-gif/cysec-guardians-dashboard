@@ -1,121 +1,63 @@
-// api.js
-// Self-Healing API Layer + Chaos Testing Support
-console.log("STATE.JS LOADED CORRECT VERSION");
-import { logEvent } from "./observability.js";
-import { applyChaos } from "./chaos.js";
-import { getState } from "./state.js"; // 🔥 NEW
+// state.js
 
-/* ======================================================
-   CONFIG
-====================================================== */
+import { apiFetch } from "./api.js";
 
-const API_BASE = "https://cysec-backend.onrender.com";
+/* ===============================
+   INTERNAL STATE
+=============================== */
 
-const MAX_RETRIES = 3;
-const BASE_DELAY = 800; // ms
+const state = {
+  user: null,
+  org: null,
+  loaded: false
+};
 
-/* ======================================================
-   HELPERS
-====================================================== */
+const listeners = new Set();
 
-function getAuthHeaders() {
-  const token = localStorage.getItem("auth_token");
+/* ===============================
+   SUBSCRIBE SYSTEM
+=============================== */
 
-  return {
-    "Content-Type": "application/json",
-    ...(token && { Authorization: `Bearer ${token}` })
-  };
+export function subscribe(fn) {
+  listeners.add(fn);
+  return () => listeners.delete(fn);
 }
 
-function sleep(ms) {
-  return new Promise(res => setTimeout(res, ms));
+function notify() {
+  listeners.forEach(fn => fn(state));
 }
 
-function backoffDelay(attempt) {
-  const jitter = Math.random() * 300;
-  return BASE_DELAY * (2 ** attempt) + jitter;
+/* ===============================
+   GET STATE
+=============================== */
+
+export function getState() {
+  return state;
 }
 
-/* ======================================================
-   ADD ORG ID AUTOMATICALLY
-====================================================== */
+/* ===============================
+   UPDATE STATE
+=============================== */
 
-function attachOrgId(path) {
-  const state = getState();
-  const orgId = state?.org?.id;
-
-  if (!orgId) return path;
-
-  // if already has query params
-  if (path.includes("?")) {
-    return `${path}&org_id=${orgId}`;
-  }
-
-  return `${path}?org_id=${orgId}`;
+export function updateState(updates) {
+  Object.assign(state, updates);
+  notify();
 }
 
-/* ======================================================
-   CORE REQUEST WITH RETRY
-====================================================== */
+/* ===============================
+   LOAD STATE ONCE
+=============================== */
 
-async function requestWithRetry(url, options, attempt = 0) {
+export async function loadAppState() {
+  if (state.loaded) return state;
 
-  try {
+  const me = await apiFetch("/me");
 
-    await applyChaos();
+  updateState({
+    user: me,
+    org: { id: me.org_id },
+    loaded: true
+  });
 
-    const res = await fetch(url, options);
-
-    if (!res.ok) {
-      throw new Error(`HTTP ${res.status}`);
-    }
-
-    const data = await res.json();
-
-    if (attempt > 0) {
-      logEvent("RECOVERY", `Recovered after retry (${attempt})`);
-    }
-
-    return data;
-
-  } catch (err) {
-
-    logEvent("ERROR", `API failed (${attempt}) → ${url}`);
-
-    if (attempt >= MAX_RETRIES) {
-      logEvent("ERROR", `Permanent failure: ${url}`);
-      throw err;
-    }
-
-    const delay = backoffDelay(attempt);
-
-    logEvent("RECOVERY", `Retrying in ${Math.round(delay)}ms`);
-
-    await sleep(delay);
-
-    return requestWithRetry(url, options, attempt + 1);
-  }
-}
-
-/* ======================================================
-   PUBLIC API
-====================================================== */
-
-export async function apiFetch(path, options = {}) {
-
-  // 🔥 AUTO ATTACH ORG ID
-  const finalPath = attachOrgId(path);
-
-  const url = `${API_BASE}${finalPath}`;
-
-  const config = {
-    method: options.method || "GET",
-    headers: {
-      ...getAuthHeaders(),
-      ...(options.headers || {})
-    },
-    body: options.body
-  };
-
-  return requestWithRetry(url, config);
+  return state;
 }
