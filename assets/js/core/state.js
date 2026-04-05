@@ -1,6 +1,6 @@
 // api.js
 // Self-Healing API Layer + Chaos Testing Support
-
+console.log("STATE.JS LOADED CORRECT VERSION");
 import { logEvent } from "./observability.js";
 import { applyChaos } from "./chaos.js";
 import { getState } from "./state.js"; // 🔥 NEW
