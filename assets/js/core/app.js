@@ -14,21 +14,7 @@ async function loadUsers() {
     const table = document.getElementById("usersTable");
     if (!table) return; // only run on users page
 
-    const orgId = localStorage.getItem("org_id");
-
-    if (!orgId) {
-      console.error("Missing org_id");
-      table.innerHTML = `
-        <tr>
-          <td colspan="3" class="text-center text-danger">
-            Missing organization ID
-          </td>
-        </tr>
-      `;
-      return;
-    }
-
-    const users = await apiFetch(`/employees?org_id=${orgId}`);
+    const users = await apiFetch("/employees");
 
     console.log("Users API response:", users);
 
@@ -68,21 +54,58 @@ async function loadUsers() {
 }
 
 /* ===============================
+   DASHBOARD LOGIC
+=============================== */
+
+async function loadDashboard() {
+  try {
+    const el = document.getElementById("kpi-total-users");
+    if (!el) return; // only run on dashboard page
+
+    const data = await apiFetch("/dashboard/summary");
+
+    console.log("Dashboard API response:", data);
+
+    document.getElementById("kpi-total-users").textContent =
+      data.total_users ?? "--";
+
+    document.getElementById("kpi-compliant-users").textContent =
+      data.compliant_users ?? "--";
+
+    document.getElementById("kpi-pending-training").textContent =
+      data.pending_training ?? "--";
+
+    document.getElementById("kpi-failed-phishing").textContent =
+      data.failed_phishing ?? "--";
+
+    document.getElementById("kpi-awareness-score").textContent =
+      data.awareness_score ?? "--";
+
+  } catch (err) {
+    console.error("Dashboard load failed:", err);
+  }
+}
+
+/* ===============================
    BOOTSTRAP
 =============================== */
 
 async function bootstrap() {
   try {
+    // Load user + org state first
     await loadAppState();
 
+    // Start engines
     startLiveEngine();
     startPrefetchEngine();
     startNavigationAI();
 
+    // Observability UI
     initObservabilityUI();
 
-    // 🔥 ADD THIS
+    // Page-specific loaders
     await loadUsers();
+    await loadDashboard();
 
     console.log("App bootstrapped");
 
