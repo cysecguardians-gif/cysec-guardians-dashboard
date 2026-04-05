@@ -3,6 +3,7 @@
 
 import { logEvent } from "./observability.js";
 import { applyChaos } from "./chaos.js";
+import { getState } from "./state.js"; // 🔥 NEW
 
 /* ======================================================
    CONFIG
@@ -31,9 +32,26 @@ function sleep(ms) {
 }
 
 function backoffDelay(attempt) {
-  // exponential backoff + jitter
   const jitter = Math.random() * 300;
   return BASE_DELAY * (2 ** attempt) + jitter;
+}
+
+/* ======================================================
+   ADD ORG ID AUTOMATICALLY
+====================================================== */
+
+function attachOrgId(path) {
+  const state = getState();
+  const orgId = state?.org?.id;
+
+  if (!orgId) return path;
+
+  // if already has query params
+  if (path.includes("?")) {
+    return `${path}&org_id=${orgId}`;
+  }
+
+  return `${path}?org_id=${orgId}`;
 }
 
 /* ======================================================
@@ -44,8 +62,6 @@ async function requestWithRetry(url, options, attempt = 0) {
 
   try {
 
-    // ⭐ CHAOS TESTING HOOK
-    // (does nothing unless chaos mode enabled)
     await applyChaos();
 
     const res = await fetch(url, options);
@@ -56,48 +72,28 @@ async function requestWithRetry(url, options, attempt = 0) {
 
     const data = await res.json();
 
-    // successful recovery log
     if (attempt > 0) {
-      logEvent(
-        "RECOVERY",
-        `Recovered after retry (${attempt})`
-      );
+      logEvent("RECOVERY", `Recovered after retry (${attempt})`);
     }
 
     return data;
 
   } catch (err) {
 
-    logEvent(
-      "ERROR",
-      `API failed (${attempt}) → ${url}`
-    );
+    logEvent("ERROR", `API failed (${attempt}) → ${url}`);
 
-    // max retries reached
     if (attempt >= MAX_RETRIES) {
-
-      logEvent(
-        "ERROR",
-        `Permanent failure: ${url}`
-      );
-
+      logEvent("ERROR", `Permanent failure: ${url}`);
       throw err;
     }
 
     const delay = backoffDelay(attempt);
 
-    logEvent(
-      "RECOVERY",
-      `Retrying in ${Math.round(delay)}ms`
-    );
+    logEvent("RECOVERY", `Retrying in ${Math.round(delay)}ms`);
 
     await sleep(delay);
 
-    return requestWithRetry(
-      url,
-      options,
-      attempt + 1
-    );
+    return requestWithRetry(url, options, attempt + 1);
   }
 }
 
@@ -107,7 +103,10 @@ async function requestWithRetry(url, options, attempt = 0) {
 
 export async function apiFetch(path, options = {}) {
 
-  const url = `${API_BASE}${path}`;
+  // 🔥 AUTO ATTACH ORG ID
+  const finalPath = attachOrgId(path);
+
+  const url = `${API_BASE}${finalPath}`;
 
   const config = {
     method: options.method || "GET",
