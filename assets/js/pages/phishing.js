@@ -29,7 +29,7 @@ function renderCampaigns(data) {
       <tr>
         <td>${c.name}</td>
         <td>${c.status}</td>
-        <td>${c.launch_date || ""}</td>
+        <td>${c.created_at || ""}</td>
       </tr>
     `;
   });
@@ -44,28 +44,19 @@ function bindButtons() {
   document
     .getElementById("manageTemplatesBtn")
     ?.addEventListener("click", () => {
-      window.open(
-        "https://34.135.161.255:3333/templates",
-        "_blank"
-      );
+      alert("Predefined templates will be available soon");
     });
 
   document
     .getElementById("createTemplateBtn")
     ?.addEventListener("click", () => {
-      window.open(
-        "https://34.135.161.255:3333/templates",
-        "_blank"
-      );
+      alert("Custom templates are currently disabled for compliance");
     });
 
   document
     .getElementById("manageDomainsBtn")
     ?.addEventListener("click", () => {
-      window.open(
-        "https://34.135.161.255:3333",
-        "_blank"
-      );
+      alert("Domain management handled via SendGrid");
     });
 
   document
@@ -74,7 +65,6 @@ function bindButtons() {
       initPhishingWizard();
     });
 }
-
 /* ======================================================
    INIT
 ====================================================== */
