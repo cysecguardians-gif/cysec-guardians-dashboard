@@ -131,7 +131,7 @@ function initPhishingUI() {
         <tr>
           <td>${c.name || "-"}</td>
           <td>${c.status || "-"}</td>
-          <td>${c.scheduled_at || "-"}</td>
+          <td>${c.created_at || "-"}</td>
         </tr>
       `).join("");
 
@@ -296,7 +296,10 @@ function initPhishingUI() {
       })
     });
 
-    const campaignId = campaignRes[0].id;
+    const campaignId = campaignRes?.[0]?.id;
+
+   if (!campaignId) {
+     throw new Error("Campaign creation failed");
 
     // 2️⃣ Fetch users (targets)
     const users = await apiFetch("/employees");
