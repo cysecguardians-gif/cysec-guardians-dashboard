@@ -264,74 +264,102 @@ function initPhishingUI() {
 
   nextBtn.addEventListener("click", async () => {
 
-    if (currentStep === 1) {
-      if (!campaignDraft.template) {
-        alert("Please select a goal first");
+  // ===============================
+  // STEP 1 → STEP 2
+  // ===============================
+  if (currentStep === 1) {
+    if (!campaignDraft.template) {
+      alert("Please select a goal first");
+      return;
+    }
+
+    renderStep2();
+    currentStep = 2;
+    return;
+  }
+
+  // ===============================
+  // STEP 2 → STEP 3
+  // ===============================
+  if (currentStep === 2) {
+    renderStep3();
+    currentStep = 3;
+    return;
+  }
+
+  // ===============================
+  // FINAL STEP → LAUNCH CAMPAIGN
+  // ===============================
+  if (currentStep === 3) {
+    try {
+
+      // 🔒 Prevent multiple clicks
+      nextBtn.disabled = true;
+      nextBtn.textContent = "Launching...";
+
+      const stateModule = await import("./state.js");
+      const state = stateModule.getState();
+
+      // 1️⃣ Create campaign
+      const campaignRes = await apiFetch("/phishing/campaign", {
+        method: "POST",
+        body: JSON.stringify({
+          name: `${campaignDraft.goal} Campaign`,
+          template_id: campaignDraft.template,
+          group_id: null
+        })
+      });
+
+      const campaignId = campaignRes?.[0]?.id;
+
+      if (!campaignId) {
+        throw new Error("Campaign creation failed");
+      }
+
+      // 2️⃣ Fetch users (targets)
+      const users = await apiFetch("/employees");
+
+      if (!users || users.length === 0) {
+        alert("No users available to send campaign");
+        nextBtn.disabled = false;
+        nextBtn.textContent = "Launch Campaign 🚀";
         return;
       }
-      renderStep2();
-      currentStep = 2;
-      return;
+
+      const recipients = users.map(u => ({
+        email: u.email,
+        name: u.name
+      }));
+
+      // 3️⃣ Add recipients
+      await apiFetch(`/phishing/campaign/${campaignId}/recipients`, {
+        method: "POST",
+        body: JSON.stringify({ recipients })
+      });
+
+      // 4️⃣ Send campaign
+      await apiFetch(`/phishing/campaign/${campaignId}/send`, {
+        method: "POST"
+      });
+
+      alert("Campaign launched successfully 🚀");
+
+      // Reset UI
+      resetWizard();
+      loadCampaigns();
+
+    } catch (err) {
+      console.error(err);
+      alert("Failed to launch campaign");
+
+    } finally {
+      // 🔁 Restore button state
+      nextBtn.disabled = false;
+      nextBtn.textContent = "Next Step";
     }
-
-    if (currentStep === 2) {
-      renderStep3();
-      currentStep = 3;
-      return;
-    }
-
-   if (currentStep === 3) {
-  try {
-
-    const stateModule = await import("./state.js");
-    const state = stateModule.getState();
-
-    // 1️⃣ Create campaign
-    const campaignRes = await apiFetch("/phishing/campaign", {
-      method: "POST",
-      body: JSON.stringify({
-        name: `${campaignDraft.goal} Campaign`,
-        template_id: campaignDraft.template,
-        group_id: null
-      })
-    });
-
-    const campaignId = campaignRes?.[0]?.id;
-
-   if (!campaignId) {
-     throw new Error("Campaign creation failed");
-
-    // 2️⃣ Fetch users (targets)
-    const users = await apiFetch("/employees");
-
-    const recipients = users.map(u => ({
-      email: u.email,
-      name: u.name
-    }));
-
-    // 3️⃣ Add recipients
-    await apiFetch(`/phishing/campaign/${campaignId}/recipients`, {
-      method: "POST",
-      body: JSON.stringify({ recipients })
-    });
-
-    // 4️⃣ Send campaign
-    await apiFetch(`/phishing/campaign/${campaignId}/send`, {
-      method: "POST"
-    });
-
-    alert("Campaign launched successfully 🚀");
-
-    resetWizard();
-    loadCampaigns();
-
-  } catch (err) {
-    console.error(err);
-    alert("Failed to launch campaign");
   }
-}
 
-  });
+});
 
   /* ===============================
      BACK BUTTON
