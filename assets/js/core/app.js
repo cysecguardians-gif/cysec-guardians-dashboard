@@ -415,7 +415,7 @@ async function bootstrap() {
 
     await loadUsers();
     await loadDashboard();
-    initPhishingUI();
+    initPhishingWizard();
 
     console.log("App bootstrapped");
 
