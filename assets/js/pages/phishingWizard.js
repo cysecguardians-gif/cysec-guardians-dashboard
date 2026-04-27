@@ -421,15 +421,68 @@ function renderReviewStep() {
    FINAL
 ====================================================== */
 
-function launchCampaign() {
+async function launchCampaign() {
 
-  console.log("Launching:", campaignDraft);
+  try {
 
-  showToast("Campaign launched!", "success");
+    showToast("Launching campaign...", "info");
 
-  closeWizard();
+    const { apiFetch } = await import("../core/api.js");
+    const { getState } = await import("../core/state.js");
+
+    const state = getState();
+
+    // 1️⃣ Create campaign
+    const campaignRes = await apiFetch("/phishing/campaign", {
+      method: "POST",
+      body: JSON.stringify({
+        name: `${campaignDraft.goal} Campaign`,
+        template_id: campaignDraft.template,
+        group_id: null,
+        org_id: state.org.id,
+        created_by: state.user.id
+      })
+    });
+
+    const campaignId = campaignRes?.[0]?.id;
+
+    if (!campaignId) {
+      throw new Error("Campaign creation failed");
+    }
+
+    // 2️⃣ Get users
+    const users = await apiFetch("/employees");
+
+    if (!users || users.length === 0) {
+      showToast("No users found", "error");
+      return;
+    }
+
+    const recipients = users.map(u => ({
+      email: u.email,
+      name: u.name
+    }));
+
+    // 3️⃣ Add recipients
+    await apiFetch(`/phishing/campaign/${campaignId}/recipients`, {
+      method: "POST",
+      body: JSON.stringify({ recipients })
+    });
+
+    // 4️⃣ Send campaign
+    await apiFetch(`/phishing/campaign/${campaignId}/send`, {
+      method: "POST"
+    });
+
+    showToast("Campaign launched successfully 🚀", "success");
+
+    closeWizard();
+
+  } catch (err) {
+    console.error(err);
+    showToast("Failed to launch campaign", "error");
+  }
 }
-
 /* ======================================================
    EVENTS
 ====================================================== */
