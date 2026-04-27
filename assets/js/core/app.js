@@ -302,30 +302,35 @@ campaignDraft.goal = text;
   // FINAL STEP → LAUNCH CAMPAIGN
   // ===============================
   if (currentStep === 3) {
-    try {
+  try {
 
-      // 🔒 Prevent multiple clicks
-      nextBtn.disabled = true;
-      nextBtn.textContent = "Launching...";
+    // 🔒 Prevent multiple clicks
+    nextBtn.disabled = true;
+    nextBtn.textContent = "Launching...";
 
-      const stateModule = await import("./state.js");
-      const state = stateModule.getState();
+    const stateModule = await import("./state.js");
+    const state = stateModule.getState();
 
-      // 1️⃣ Create campaign
-      const campaignRes = await apiFetch("/phishing/campaign", {
-        method: "POST",
-        body: JSON.stringify({
-          name: `${campaignDraft.goal} Campaign`,
-          template_id: campaignDraft.template,
-          group_id: null
-        })
-      });
+    // ✅ DEBUG (add here)
+    console.log("DEBUG TEMPLATE:", campaignDraft.template);
 
-      const campaignId = campaignRes?.[0]?.id;
+    // 1️⃣ Create campaign
+    const campaignRes = await apiFetch("/phishing/campaign", {
+      method: "POST",
+      body: JSON.stringify({
+        name: `${campaignDraft.goal} Campaign`,
+        template_id: campaignDraft.template,
+        group_id: null,
+        org_id: state.org.id,
+        created_by: state.user.id
+      })
+    });
 
-      if (!campaignId) {
-        throw new Error("Campaign creation failed");
-      }
+    const campaignId = campaignRes?.[0]?.id;
+
+    if (!campaignId) {
+      throw new Error("Campaign creation failed");
+    }
 
       // 2️⃣ Fetch users (targets)
       const users = await apiFetch("/employees");
