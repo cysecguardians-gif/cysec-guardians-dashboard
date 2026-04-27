@@ -208,13 +208,24 @@ function initPhishingUI() {
 
         const text = btn.innerText.trim();
 
-        if (text.includes("Invoice")) {
-          campaignDraft.template = "invoice_template";
-        } else if (text.includes("Credential")) {
-          campaignDraft.template = "login_template";
-        } else {
-          campaignDraft.template = "hr_template";
-        }
+switch (true) {
+  case text.includes("Invoice"):
+    campaignDraft.template = "invoice_template";
+    break;
+
+  case text.includes("Credential"):
+    campaignDraft.template = "login_template";
+    break;
+
+  case text.includes("HR"):
+    campaignDraft.template = "hr_template";
+    break;
+
+  default:
+    campaignDraft.template = "default";
+}
+
+campaignDraft.goal = text;
 
         campaignDraft.goal = text;
       });
