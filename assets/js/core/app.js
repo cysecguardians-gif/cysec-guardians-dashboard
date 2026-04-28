@@ -4,6 +4,7 @@ import { startPrefetchEngine } from "./prefetch.js";
 import { startNavigationAI } from "./navigationAI.js";
 import { initObservabilityUI } from "./observability.js";
 import { apiFetch } from "./api.js";
+import { initPhishingWizard } from "./phishingWizard.js";
 
 /* ===============================
    USERS PAGE LOGIC
