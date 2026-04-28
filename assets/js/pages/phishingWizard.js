@@ -30,7 +30,13 @@ let currentStep = 0;
 const campaignDraft = {
   goal: null,
   targets: null,
+
+  // phishing scenario template
   template: null,
+
+  // risk intelligence layer
+  riskTemplate: null,
+
   domain: null,
   schedule: null,
   followupTraining: null,
@@ -139,6 +145,7 @@ function openWizard() {
 }
 
 function closeWizard() {
+  resetDraft();
   wizardView.classList.add("d-none");
   homeView.classList.remove("d-none");
 }
@@ -318,17 +325,17 @@ function applyRiskIntelligence(dept) {
   if (level === "HIGH") {
     alertType = "danger";
     message = `⚠ ${dept} is HIGH risk. Recommended advanced template.`;
-    campaignDraft.template = "high_risk_template";
+    campaignDraft.riskTemplate = "high_risk";
   }
 
   if (level === "MEDIUM") {
     alertType = "warning";
     message = `⚠ ${dept} has MEDIUM risk. Recommended realistic simulation.`;
-    campaignDraft.template = "medium_risk_template";
+    campaignDraft.riskTemplate = "medium_risk";
   }
 
   if (level === "LOW") {
-    campaignDraft.template = "basic_template";
+    campaignDraft.riskTemplate = "basic_risk";
   }
 
   riskHint.innerHTML = `
@@ -357,7 +364,7 @@ function renderTemplateStep() {
     </div>
 
     <p class="text-muted">
-      Template selector UI here.
+      Template automatically selected based on campaign goal and organizational risk intelligence.
     </p>
   `;
 }
@@ -396,12 +403,12 @@ function renderReviewStep() {
     <h5>Step 6 — Review</h5>
 
     <div class="alert alert-info">
-      <strong>Goal:</strong> ${campaignDraft.goal || "--"}<br>
-      <strong>Targets:</strong> ${campaignDraft.targets || "--"}<br>
-      <strong>Template:</strong> ${campaignDraft.template || "--"}<br>
-      <strong>Schedule:</strong> ${campaignDraft.schedule || "--"}
-    </div>
-
+     <strong>Goal:</strong> ${campaignDraft.goal || "--"}<br>
+     <strong>Targets:</strong> ${campaignDraft.targets || "--"}<br>
+     <strong>Template:</strong> ${campaignDraft.template || "--"}<br>
+     <strong>Risk Profile:</strong> ${campaignDraft.riskTemplate || "--"}<br>
+     <strong>Schedule:</strong> ${campaignDraft.schedule || "--"}
+   </div>
     ${
       recs.length
         ? `
@@ -426,6 +433,8 @@ async function launchCampaign() {
   try {
 
     showToast("Launching campaign...", "info");
+    btnNext.disabled = true;
+    btnNext.textContent = "Launching...";
 
     const { apiFetch } = await import("../core/api.js");
     const { getState } = await import("../core/state.js");
@@ -436,7 +445,8 @@ async function launchCampaign() {
     const campaignRes = await apiFetch("/phishing/campaign", {
       method: "POST",
       body: JSON.stringify({
-        name: `${campaignDraft.goal} Campaign`,
+        name:
+  `         ${campaignDraft.goal.toUpperCase()} Simulation`,
         template_id: campaignDraft.template,
         group_id: null,
         org_id: state.org.id,
@@ -475,12 +485,16 @@ async function launchCampaign() {
     });
 
     showToast("Campaign launched successfully 🚀", "success");
+    btnNext.disabled = false;
+    btnNext.textContent = "Launch Campaign";
 
     closeWizard();
 
   } catch (err) {
     console.error(err);
     showToast("Failed to launch campaign", "error");
+    btnNext.disabled = false;
+    btnNext.textContent = "Launch Campaign";
   }
 }
 /* ======================================================
@@ -498,4 +512,15 @@ btnBack?.addEventListener("click", prevStep);
 
 export function initPhishingWizard() {
   console.log("Autonomous risk-aware wizard ready");
+}
+function resetDraft() {
+
+  campaignDraft.goal = null;
+  campaignDraft.targets = null;
+  campaignDraft.template = null;
+  campaignDraft.riskTemplate = null;
+  campaignDraft.domain = null;
+  campaignDraft.schedule = null;
+  campaignDraft.followupTraining = null;
+  campaignDraft.recommendations = [];
 }
